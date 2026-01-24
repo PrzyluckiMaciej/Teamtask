@@ -7,11 +7,13 @@ import mp.teamtask.dto.UserDTO;
 import mp.teamtask.service.RoleService;
 import mp.teamtask.service.UserService;
 import mp.teamtask.service.TaskService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -58,8 +60,13 @@ public class WebController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("tasks", taskService.getAllTasks());
+    public String dashboard(@RequestParam(required = false) boolean myTasks, Model model, Authentication authentication) {
+        if (myTasks) {
+            User currentUser = (User) authentication.getPrincipal();
+            model.addAttribute("tasks", taskService.getTasksByAssignee(currentUser.getId()));
+        } else {
+            model.addAttribute("tasks", taskService.getAllTasks());
+        }
         return "dashboard";
     }
 }
