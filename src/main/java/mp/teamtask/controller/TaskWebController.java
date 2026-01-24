@@ -46,6 +46,17 @@ public class TaskWebController {
         return "redirect:/dashboard";
     }
 
+    @GetMapping("/{id}")
+    public String taskDetails(@PathVariable Long id, Model model) {
+        Task task = taskService.getTaskById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
+
+        model.addAttribute("task", task);
+        model.addAttribute("stages", TaskStage.values());
+        model.addAttribute("users", userService.getAllUsers());
+        return "tasks/view-task";
+    }
+
     // Show form to edit an existing task
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
