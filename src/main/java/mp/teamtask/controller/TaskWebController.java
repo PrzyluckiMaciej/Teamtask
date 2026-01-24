@@ -36,7 +36,7 @@ public class TaskWebController {
         task.setTitle(taskDTO.getTitle());
         task.setDescription(taskDTO.getDescription());
 
-        TaskStage initialStage = taskStageService.getOrCreateStage("NEW");
+        TaskStage initialStage = taskStageService.getDefaultStage();
         task.setStage(initialStage);
 
         taskService.createTask(task, taskDTO.getAssigneeId());

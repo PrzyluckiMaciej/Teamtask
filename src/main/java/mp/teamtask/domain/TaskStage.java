@@ -18,4 +18,8 @@ public class TaskStage {
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    private String color;
+
+    private boolean isDefault = false;
 }
