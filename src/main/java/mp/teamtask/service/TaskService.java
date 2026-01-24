@@ -1,9 +1,11 @@
 package mp.teamtask.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Task;
 import mp.teamtask.domain.enums.TaskStage;
 import mp.teamtask.domain.User;
+import mp.teamtask.dto.TaskDTO;
 import mp.teamtask.repository.TaskRepository;
 import mp.teamtask.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -35,21 +37,21 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public Task updateTask(Long id, Task taskDetails) {
+    @Transactional
+    public void updateTask(Long id, TaskDTO dto) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        task.setTitle(taskDetails.getTitle());
-        task.setDescription(taskDetails.getDescription());
-        task.setStage(taskDetails.getStage());
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStage(dto.getStage()); // Update the stage here
 
-        if (taskDetails.getAssignee() != null && taskDetails.getAssignee().getId() != null) {
-            User assignee = userRepository.findById(taskDetails.getAssignee().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Assignee not found"));
-            task.setAssignee(assignee);
+        if (dto.getAssigneeId() != null) {
+            User user = userRepository.findById(dto.getAssigneeId()).orElse(null);
+            task.setAssignee(user);
+        } else {
+            task.setAssignee(null);
         }
-
-        return taskRepository.save(task);
     }
 
     public Task updateTaskStage(Long id, TaskStage stage) {
