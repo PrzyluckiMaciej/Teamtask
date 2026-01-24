@@ -54,7 +54,7 @@ public class TaskWebController {
         model.addAttribute("task", task);
         model.addAttribute("stages", TaskStage.values());
         model.addAttribute("users", userService.getAllUsers());
-        return "tasks/view-task";
+        return "tasks/details";
     }
 
     // Show form to edit an existing task
