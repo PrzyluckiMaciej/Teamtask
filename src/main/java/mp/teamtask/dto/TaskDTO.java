@@ -2,7 +2,6 @@ package mp.teamtask.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import mp.teamtask.domain.enums.TaskStage;
 
 @Data
 public class TaskDTO {
@@ -14,7 +13,7 @@ public class TaskDTO {
 
     private String description;
 
-    private TaskStage stage;
+    private Long stageId;
 
     private Long assigneeId;
 

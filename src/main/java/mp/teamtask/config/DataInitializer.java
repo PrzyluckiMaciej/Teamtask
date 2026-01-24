@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
 import mp.teamtask.domain.User;
 import mp.teamtask.service.RoleService;
+import mp.teamtask.service.TaskStageService;
 import mp.teamtask.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final RoleService roleService;
     private final UserService userService;
+    private final TaskStageService stageService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -59,5 +61,10 @@ public class DataInitializer implements CommandLineRunner {
             userService.registerUser(tester);
             System.out.println("Tester user created: tester@teamtask.com / tester123");
         }
+
+        stageService.getOrCreateStage("NEW");
+        stageService.getOrCreateStage("IN_PROGRESS");
+        stageService.getOrCreateStage("TESTING");
+        stageService.getOrCreateStage("COMPLETED");
     }
 }

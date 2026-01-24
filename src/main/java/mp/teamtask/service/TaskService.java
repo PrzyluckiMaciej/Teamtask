@@ -3,10 +3,11 @@ package mp.teamtask.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Task;
-import mp.teamtask.domain.enums.TaskStage;
+import mp.teamtask.domain.TaskStage;
 import mp.teamtask.domain.User;
 import mp.teamtask.dto.TaskDTO;
 import mp.teamtask.repository.TaskRepository;
+import mp.teamtask.repository.TaskStageRepository;
 import mp.teamtask.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,19 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TaskStageRepository taskStageRepository;
 
     public void createTask(Task task, Long assigneeId) {
         if (assigneeId != null) {
             User assignee = userRepository.findById(assigneeId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignee(assignee);
+        }
+
+        if (task.getStage() == null) {
+            TaskStage newStage = taskStageRepository.findByName("NEW")
+                    .orElseThrow(() -> new RuntimeException("Default stage NEW not found"));
+            task.setStage(newStage);
         }
         taskRepository.save(task);
     }
@@ -44,22 +52,24 @@ public class TaskService {
 
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
-        task.setStage(dto.getStage()); // Update the stage here
 
+        // Update Stage via database lookup
+        if (dto.getStageId() != null) {
+            TaskStage stage = taskStageRepository.findById(dto.getStageId())
+                    .orElseThrow(() -> new RuntimeException("Stage not found"));
+            task.setStage(stage);
+        }
+
+        // Update Assignee via database lookup
         if (dto.getAssigneeId() != null) {
-            User user = userRepository.findById(dto.getAssigneeId()).orElse(null);
+            User user = userRepository.findById(dto.getAssigneeId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignee(user);
         } else {
             task.setAssignee(null);
         }
-    }
 
-    public Task updateTaskStage(Long id, TaskStage stage) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
-
-        task.setStage(stage);
-        return taskRepository.save(task);
+        taskRepository.save(task);
     }
 
     public Task assignTask(Long taskId, Long userId) {
@@ -81,9 +91,5 @@ public class TaskService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         return taskRepository.findByAssignee(user);
-    }
-
-    public List<Task> getTasksByStage(TaskStage stage) {
-        return taskRepository.findByStage(stage);
     }
 }

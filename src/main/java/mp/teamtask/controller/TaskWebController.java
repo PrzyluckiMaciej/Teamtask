@@ -2,9 +2,10 @@ package mp.teamtask.controller;
 
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Task;
-import mp.teamtask.domain.enums.TaskStage;
+import mp.teamtask.domain.TaskStage;
 import mp.teamtask.dto.TaskDTO;
 import mp.teamtask.service.TaskService;
+import mp.teamtask.service.TaskStageService;
 import mp.teamtask.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ public class TaskWebController {
 
     private final TaskService taskService;
     private final UserService userService;
+    private final TaskStageService taskStageService;
 
     // Show form to create a new task
     @GetMapping("/new")
@@ -33,16 +35,11 @@ public class TaskWebController {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());
         task.setDescription(taskDTO.getDescription());
-        task.setStage(TaskStage.NEW);
+
+        TaskStage initialStage = taskStageService.getOrCreateStage("NEW");
+        task.setStage(initialStage);
 
         taskService.createTask(task, taskDTO.getAssigneeId());
-        return "redirect:/dashboard";
-    }
-
-    // Update only the stage of a task (e.g., NEW -> IN_PROGRESS)
-    @PatchMapping("/{id}/stage")
-    public String updateTaskStage(@PathVariable Long id, @RequestParam TaskStage stage) {
-        taskService.updateTaskStage(id, stage);
         return "redirect:/dashboard";
     }
 
@@ -52,7 +49,7 @@ public class TaskWebController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
 
         model.addAttribute("task", task);
-        model.addAttribute("stages", TaskStage.values());
+        model.addAttribute("stages", taskStageService.getAllStages());
         model.addAttribute("users", userService.getAllUsers());
         return "tasks/details";
     }

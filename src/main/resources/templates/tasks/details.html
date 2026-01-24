@@ -34,14 +34,14 @@
                                class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                required>
                     </div>
-                    <div>
+                    <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select name="stage"
-                                class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option th:each="stage : ${stages}"
-                                    th:value="${stage}"
-                                    th:selected="${stage == task.stage}"
-                                    th:text="${stage}">
+                        <select name="stageId" class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option th:each="s : ${stages}"
+                                    th:value="${s.id}"
+                                    th:selected="${task.stage != null && task.stage.id == s.id}"
+                                    th:text="${s.name}">
+                                Status Name
                             </option>
                         </select>
                     </div>

@@ -18,15 +18,15 @@
                         <span th:text="${task.title}">Task Title</span>
                     </a>
                 </div>
-                <span th:text="${task.stage}"
+                <span th:text="${task.stage.name}"
                       th:classappend="${
-                task.stage.name() == 'NEW' ? 'bg-gray-100 text-gray-700' :
-                (task.stage.name() == 'IN_PROGRESS' ? 'bg-yellow-100 text-yellow-700' :
-                'bg-green-100 text-green-700')
-              }"
-                      class="px-2.5 py-0.5 rounded-full text-xs font-medium uppercase tracking-wider">
-            STAGE
-        </span>
+                          task.stage.name == 'NEW' ? 'bg-gray-100 text-gray-700' :
+                          (task.stage.name == 'IN_PROGRESS' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-green-100 text-green-700')
+                      }"
+                                      class="px-2.5 py-0.5 rounded-full text-xs font-medium uppercase tracking-wider">
+                    STAGE
+                </span>
             </div>
             <p class="text-gray-600 text-sm mb-4 line-clamp-2" th:text="${task.description}">Description goes here...</p>
             <div class="border-t pt-4 flex justify-between items-center text-xs text-gray-500">

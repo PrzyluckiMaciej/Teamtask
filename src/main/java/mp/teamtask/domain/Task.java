@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mp.teamtask.domain.enums.TaskStage;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +26,9 @@ public class Task {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TaskStage stage = TaskStage.NEW;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stage_id", nullable = false)
+    private TaskStage stage;
 
     @ManyToOne
     @JoinColumn(name = "assignee_id")
