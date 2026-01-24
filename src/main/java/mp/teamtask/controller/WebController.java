@@ -18,6 +18,11 @@ public class WebController {
     private final UserService userService;
     private final TaskService taskService;
 
+    @GetMapping("/")
+    public String index() {
+        return "redirect:/dashboard";
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login"; // renders templates/login.html
