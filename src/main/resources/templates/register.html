@@ -28,8 +28,11 @@
         </div>
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700">Your Role</label>
-            <select th:field="*{role}" class="w-full p-2 border rounded mt-1 bg-white">
-                <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+            <select th:field="*{roleId}" class="w-full p-2 border rounded mt-1 bg-white">
+                <option th:each="role : ${roles}"
+                        th:value="${role.id}"
+                        th:text="${role.name}">
+                </option>
             </select>
         </div>
         <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">Register</button>

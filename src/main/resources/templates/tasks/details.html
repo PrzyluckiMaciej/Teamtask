@@ -65,14 +65,14 @@
                 <!-- Assignee and Metadata -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
-                        <select name="assigneeId"
-                                class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
+                        <select name="assigneeId" class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
                             <option value="">-- Unassigned --</option>
-                            <option th:each="user : ${users}"
-                                    th:value="${user.id}"
-                                    th:selected="${task.assignee != null and task.assignee.id == user.id}"
-                                    th:text="${user.firstName + ' ' + user.lastName}">
+                            <option th:each="u : ${users}"
+                                    th:value="${u.id}"
+                                    th:selected="${task.assignee != null && task.assignee.id == u.id}"
+                                    th:text="${u.firstName + ' ' + u.lastName + ' (' + u.role.name + ')'}">
+                                User Name (Role)
                             </option>
                         </select>
                     </div>

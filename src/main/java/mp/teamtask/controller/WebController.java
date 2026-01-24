@@ -1,8 +1,10 @@
 package mp.teamtask.controller;
 
 import lombok.RequiredArgsConstructor;
+import mp.teamtask.domain.Role;
 import mp.teamtask.domain.User;
 import mp.teamtask.dto.UserDTO;
+import mp.teamtask.service.RoleService;
 import mp.teamtask.service.UserService;
 import mp.teamtask.service.TaskService;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ public class WebController {
 
     private final UserService userService;
     private final TaskService taskService;
+    private final RoleService roleService;
 
     @GetMapping("/")
     public String index() {
@@ -31,8 +34,8 @@ public class WebController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("user", new UserDTO());
-        // Pass roles to the view so the user can select one
-        model.addAttribute("roles", mp.teamtask.domain.enums.Role.values());
+        // Fetch all roles from the database instead of the Enum
+        model.addAttribute("roles", roleService.getAllRoles());
         return "register";
     }
 
@@ -43,7 +46,12 @@ public class WebController {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
-        user.setRole(userDTO.getRole());
+
+        // Fetch the Role entity using the ID from the DTO
+        if (userDTO.getRoleId() != null) {
+            Role role = roleService.getRoleById(userDTO.getRoleId());
+            user.setRole(role);
+        }
 
         userService.registerUser(user);
         return "redirect:/login?success";

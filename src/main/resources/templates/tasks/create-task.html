@@ -35,7 +35,7 @@
                 <option value="" selected>-- Select a Team Member --</option>
                 <option th:each="user : ${users}"
                         th:value="${user.id}"
-                        th:text="${user.firstName + ' ' + user.lastName + ' (' + user.role + ')'}">
+                        th:text="${user.firstName + ' ' + user.lastName + ' (' + user.role.name + ')'}">
                     User Name
                 </option>
             </select>

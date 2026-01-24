@@ -1,8 +1,9 @@
 package mp.teamtask.config;
 
 import lombok.RequiredArgsConstructor;
-import mp.teamtask.domain.enums.Role;
+import mp.teamtask.domain.Role;
 import mp.teamtask.domain.User;
+import mp.teamtask.service.RoleService;
 import mp.teamtask.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -11,10 +12,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
+    private final RoleService roleService;
     private final UserService userService;
 
     @Override
     public void run(String... args) throws Exception {
+        Role adminRole = roleService.getOrCreateRole("Admin");
+        Role programmerRole = roleService.getOrCreateRole("Programmer");
+        Role testerRole = roleService.getOrCreateRole("Tester");
+
         // Create admin user if not exists
         if (userService.getUserByEmail("admin@teamtask.com").isEmpty()) {
             User admin = new User();
@@ -22,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setLastName("User");
             admin.setEmail("admin@teamtask.com");
             admin.setPassword("admin123");
-            admin.setRole(Role.ADMIN);
+            admin.setRole(adminRole);
 
             userService.registerUser(admin);
             System.out.println("Admin user created: admin@teamtask.com / admin123");
@@ -35,7 +41,7 @@ public class DataInitializer implements CommandLineRunner {
             programmer.setLastName("Programmer");
             programmer.setEmail("programmer@teamtask.com");
             programmer.setPassword("programmer123");
-            programmer.setRole(Role.PROGRAMMER);
+            programmer.setRole(programmerRole);
 
             userService.registerUser(programmer);
             System.out.println("Programmer user created: programmer@teamtask.com / programmer123");
@@ -48,7 +54,7 @@ public class DataInitializer implements CommandLineRunner {
             tester.setLastName("Tester");
             tester.setEmail("tester@teamtask.com");
             tester.setPassword("tester123");
-            tester.setRole(Role.TESTER);
+            tester.setRole(testerRole);
 
             userService.registerUser(tester);
             System.out.println("Tester user created: tester@teamtask.com / tester123");

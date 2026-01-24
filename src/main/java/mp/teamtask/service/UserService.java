@@ -1,7 +1,5 @@
 package mp.teamtask.service;
 
-import lombok.RequiredArgsConstructor;
-import mp.teamtask.domain.enums.Role;
 import mp.teamtask.domain.User;
 import mp.teamtask.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
@@ -69,11 +67,5 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
-    }
-
-    public List<User> getUsersByRole(Role role) {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getRole() == role)
-                .toList();
     }
 }

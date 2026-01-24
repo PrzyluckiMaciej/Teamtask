@@ -57,29 +57,6 @@ public class TaskWebController {
         return "tasks/details";
     }
 
-    // Show form to edit an existing task
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Task task = taskService.getTaskById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
-
-        TaskDTO taskDTO = new TaskDTO();
-        taskDTO.setTitle(task.getTitle());
-        taskDTO.setDescription(task.getDescription());
-        taskDTO.setStage(task.getStage()); // Ensure TaskDTO has a 'stage' field
-
-        if (task.getAssignee() != null) {
-            taskDTO.setAssigneeId(task.getAssignee().getId());
-        }
-
-        model.addAttribute("task", taskDTO);
-        model.addAttribute("taskId", id);
-        model.addAttribute("users", userService.getAllUsers());
-        model.addAttribute("stages", mp.teamtask.domain.enums.TaskStage.values());
-
-        return "tasks/edit-task";
-    }
-
     // Process the update using PUT
     @PutMapping("/{id}")
     public String updateTask(@PathVariable Long id, @ModelAttribute("task") TaskDTO taskDTO) {
