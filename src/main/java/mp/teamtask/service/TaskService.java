@@ -18,14 +18,13 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    public Task createTask(Task task, Long assigneeId) {
+    public void createTask(Task task, Long assigneeId) {
         if (assigneeId != null) {
             User assignee = userRepository.findById(assigneeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Assignee not found"));
+                    .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignee(assignee);
         }
-
-        return taskRepository.save(task);
+        taskRepository.save(task);
     }
 
     public List<Task> getAllTasks() {

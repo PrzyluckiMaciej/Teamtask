@@ -21,7 +21,6 @@ public class TaskWebController {
 
     // Show form to create a new task
     @GetMapping("/new")
-    @PreAuthorize("hasRole('ADMIN')")
     public String showCreateForm(Model model) {
         model.addAttribute("task", new TaskDTO());
         model.addAttribute("users", userService.getAllUsers());
@@ -30,7 +29,6 @@ public class TaskWebController {
 
     // Process the creation of a task
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public String createTask(@ModelAttribute("task") TaskDTO taskDTO) {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());

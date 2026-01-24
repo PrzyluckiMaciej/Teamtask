@@ -18,7 +18,10 @@
 <main class="p-8">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-semibold">Active Tasks</h2>
-        <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">+ New Task</a>
+        <a th:href="@{/tasks/new}"
+           class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
+            + New Task
+        </a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
