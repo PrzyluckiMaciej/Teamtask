@@ -1,5 +1,7 @@
 package mp.teamtask.service;
 
+import jakarta.transaction.Transactional;
+import mp.teamtask.domain.Task;
 import mp.teamtask.domain.User;
 import mp.teamtask.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
@@ -65,8 +67,18 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (user.getAssignedTasks() != null) {
+            for (Task task : user.getAssignedTasks()) {
+                task.setAssignee(null);
+            }
+        }
+
+        userRepository.delete(user);
     }
 
     public long countAdmins() {
