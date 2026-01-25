@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Roles - TeamTask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div th:replace="~{fragments/navbar :: header}"></div>
+
+<main class="max-w-2xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">System Roles</h1>
+        <a th:href="@{/manage}" class="text-sm text-blue-600 hover:underline">← Back to Menu</a>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <form th:action="@{/manage/roles}" method="post" class="flex gap-3">
+            <input type="text" name="name" placeholder="e.g., Project Manager"
+                   class="flex-1 p-2 border rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">
+                Add Role
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <tbody class="divide-y divide-gray-100">
+            <tr th:each="role : ${roles}" class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4 font-medium text-gray-900" th:text="${role.name}">Role Name</td>
+                <td class="px-6 py-4 text-right">
+                    <div class="flex justify-end items-center gap-4">
+
+                        <th:block th:if="${!role.name.equalsIgnoreCase('Admin')}">
+                            <a th:href="@{/manage/roles/edit/{id}(id=${role.id})}"
+                               class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</a>
+
+                            <form th:if="${!roleUsageMap.get(role.id)}"
+                                  th:action="@{/manage/roles/{id}(id=${role.id})}" th:method="delete"
+                                  onsubmit="return confirm('Delete this role?')">
+                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                    Delete
+                                </button>
+                            </form>
+
+                            <span th:if="${roleUsageMap.get(role.id)}"
+                                  class="text-xs text-gray-400 cursor-help"
+                                  title="This role is assigned to users and cannot be deleted.">
+                    In Use
+                </span>
+                        </th:block>
+
+                        <span th:if="${role.name.equalsIgnoreCase('Admin')}"
+                              class="text-xs font-medium text-gray-400 italic">
+                System Protected
+            </span>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -31,6 +31,17 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
+    public boolean isRoleInUse(Long id) {
+        return roleRepository.countUsersByRoleId(id) > 0;
+    }
+
+    public void deleteRole(Long id) {
+        if (isRoleInUse(id)) {
+            throw new IllegalStateException("Role is currently assigned to users and cannot be deleted.");
+        }
+        roleRepository.deleteById(id);
+    }
+
     // Helper for DataInitializer to avoid exceptions during startup
     public Role getOrCreateRole(String name) {
         return roleRepository.findByName(name)
