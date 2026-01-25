@@ -2,9 +2,12 @@ package mp.teamtask.controller;
 
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
+import mp.teamtask.domain.Task;
+import mp.teamtask.domain.TaskStage;
 import mp.teamtask.domain.User;
 import mp.teamtask.dto.UserDTO;
 import mp.teamtask.service.RoleService;
+import mp.teamtask.service.TaskStageService;
 import mp.teamtask.service.UserService;
 import mp.teamtask.service.TaskService;
 import org.springframework.security.core.Authentication;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class WebController {
@@ -22,6 +27,7 @@ public class WebController {
     private final UserService userService;
     private final TaskService taskService;
     private final RoleService roleService;
+    private final TaskStageService taskStageService;
 
     @GetMapping("/")
     public String index() {
@@ -61,12 +67,16 @@ public class WebController {
 
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(required = false) boolean myTasks, Model model, Authentication authentication) {
+        List<Task> tasks;
         if (myTasks) {
             User currentUser = (User) authentication.getPrincipal();
-            model.addAttribute("tasks", taskService.getTasksByAssignee(currentUser.getId()));
+            tasks = taskService.getTasksByAssignee(currentUser.getId());
         } else {
-            model.addAttribute("tasks", taskService.getAllTasks());
+            tasks = taskService.getAllTasks();
         }
+
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("stages", taskStageService.getAllStages());
         return "dashboard";
     }
 }
