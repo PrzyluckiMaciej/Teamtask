@@ -68,4 +68,21 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    public long countAdmins() {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getRole().getName().equalsIgnoreCase("Admin"))
+                .count();
+    }
+
+    public boolean canDeleteUser(Long id) {
+        User userToDelete = userRepository.findById(id).orElse(null);
+        if (userToDelete == null) return false;
+
+        // If the user is an admin, check if they are the last one
+        if (userToDelete.getRole().getName().equalsIgnoreCase("Admin")) {
+            return countAdmins() > 1;
+        }
+        return true;
+    }
 }

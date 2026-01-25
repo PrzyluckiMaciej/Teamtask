@@ -40,7 +40,7 @@ public class SecurityConfig {
                 // CSRF is usually enabled for Thymeleaf for security
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/manage/**", "/users/**").hasRole("ADMIN") // Protect all management routes
+                        .requestMatchers("/manage/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

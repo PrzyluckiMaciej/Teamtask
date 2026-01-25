@@ -23,25 +23,4 @@ public class ManagementController {
     public String manageDashboard() {
         return "manage/dashboard";
     }
-
-    @GetMapping("/users")
-    public String manageUsers(Model model) {
-        model.addAttribute("items", userService.getAllUsers());
-        model.addAttribute("type", "users");
-        return "manage/list";
-    }
-
-    @GetMapping("/roles")
-    public String manageRoles(Model model) {
-        model.addAttribute("items", roleService.getAllRoles());
-        model.addAttribute("type", "roles");
-        return "manage/list";
-    }
-
-    @GetMapping("/stages")
-    public String manageStages(Model model) {
-        model.addAttribute("items", stageService.getAllStages());
-        model.addAttribute("type", "stages");
-        return "manage/list";
-    }
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit User - TeamTask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div th:replace="~{fragments/navbar :: header}"></div>
+
+<main class="max-w-lg mx-auto p-8">
+    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+        <h2 class="text-xl font-bold mb-6">Edit User Account</h2>
+
+        <form th:action="@{/manage/users/{id}(id=${user.id})}" th:method="put" th:object="${user}">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">First Name</label>
+                    <input type="text" th:field="*{firstName}" class="w-full p-2 border rounded mt-1 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                    <input type="text" th:field="*{lastName}" class="w-full p-2 border rounded mt-1 shadow-sm">
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700">Assign New Role</label>
+                <select th:field="*{role.id}" class="w-full p-2 border rounded mt-1 bg-white shadow-sm">
+                    <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                </select>
+            </div>
+
+            <div class="flex items-center justify-between mt-6">
+                <a th:href="@{/manage/users}" class="text-gray-500 hover:underline text-sm">Cancel</a>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">
+                    Update User
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
