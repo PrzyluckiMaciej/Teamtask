@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/manage/users")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-public class UserWebController {
+public class UserController {
 
     private final UserService userService;
     private final RoleService roleService;

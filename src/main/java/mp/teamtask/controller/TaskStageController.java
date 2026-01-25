@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/manage/stages")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-public class TaskStageWebController {
+public class TaskStageController {
 
     private final TaskStageService stageService;
 

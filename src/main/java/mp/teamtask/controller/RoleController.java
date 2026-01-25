@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/manage/roles")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-public class RoleWebController {
+public class RoleController {
 
     private final RoleService roleService;
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
-public class TaskWebController {
+public class TaskController {
 
     private final TaskService taskService;
     private final UserService userService;
