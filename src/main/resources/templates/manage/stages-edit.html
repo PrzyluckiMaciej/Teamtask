@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Stage - TeamTask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div th:replace="~{fragments/navbar :: header}"></div>
+
+<main class="max-w-lg mx-auto p-8">
+    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-800">Edit Task Stage</h2>
+            <span th:if="${stage.default}"
+                  class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-md font-bold uppercase">
+                Default Stage
+            </span>
+        </div>
+
+        <form th:action="@{/manage/stages/{id}(id=${stage.id})}" th:object="${stage}" th:method="put" class="space-y-6">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{default}">
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Stage Name</label>
+                <input type="text" th:field="*{name}"
+                       class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+                       placeholder="e.g., IN REVIEW"
+                       required>
+                <p class="mt-2 text-xs text-gray-400 italic">
+                    Note: Renaming this stage will update all existing tasks currently in this status.
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Label Color</label>
+                <div class="flex items-center gap-4">
+                    <input type="color" th:field="*{color}"
+                           class="h-12 w-24 border rounded cursor-pointer p-1">
+                    <div class="text-sm text-gray-500">
+                        Select a color to represent this stage on the dashboard.
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-2">Dashboard Preview</p>
+                <span th:text="*{name != null && name != '' ? name : 'PREVIEW'}"
+                      th:style="'background-color: ' + *{color} + '22; color: ' + *{color} + '; border: 1px solid ' + *{color}"
+                      class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                </span>
+            </div>
+
+            <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+                <a th:href="@{/manage/stages}" class="text-sm text-gray-500 hover:text-gray-700 font-medium">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition shadow-md active:scale-95">
+                    Update Stage
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    // Live preview update for the color picker
+    const colorInput = document.querySelector('input[type="color"]');
+    const nameInput = document.querySelector('input[name="name"]');
+    const previewBadge = document.querySelector('.rounded-full');
+
+    function updatePreview() {
+        const color = colorInput.value;
+        const name = nameInput.value || 'PREVIEW';
+
+        previewBadge.innerText = name.toUpperCase();
+        previewBadge.style.backgroundColor = color + '22'; // 22 is ~13% opacity in hex
+        previewBadge.style.color = color;
+        previewBadge.style.borderColor = color;
+    }
+
+    colorInput.addEventListener('input', updatePreview);
+    nameInput.addEventListener('input', updatePreview);
+</script>
+
+</body>
+</html>
