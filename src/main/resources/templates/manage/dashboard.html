@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TeamTask - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div th:replace="~{fragments/navbar :: header}"></div>
+
+<main class="max-w-6xl mx-auto p-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">System Management</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <a th:href="@{/manage/users}" class="group bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-blue-500 transition-all text-center">
+            <div class="text-4xl mb-4">👥</div>
+            <h2 class="text-xl font-bold text-gray-800 group-hover:text-blue-600">Users</h2>
+            <p class="text-gray-500 mt-2">Manage accounts and assign system roles.</p>
+        </a>
+
+        <a th:href="@{/manage/roles}" class="group bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-blue-500 transition-all text-center">
+            <div class="text-4xl mb-4">🛡️</div>
+            <h2 class="text-xl font-bold text-gray-800 group-hover:text-blue-600">Roles</h2>
+            <p class="text-gray-500 mt-2">Define user permissions and access levels.</p>
+        </a>
+
+        <a th:href="@{/manage/stages}" class="group bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-blue-500 transition-all text-center">
+            <div class="text-4xl mb-4">📊</div>
+            <h2 class="text-xl font-bold text-gray-800 group-hover:text-blue-600">Task Stages</h2>
+            <p class="text-gray-500 mt-2">Configure workflow steps and status colors.</p>
+        </a>
+    </div>
+</main>
+</body>
+</html>

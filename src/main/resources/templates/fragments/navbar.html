@@ -19,8 +19,8 @@
             My Tasks
         </a>
 
-        <a sec:authorize="hasRole('ROLE_ADMIN')"
-           th:href="@{/users}"
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/manage}"
            class="text-gray-600 hover:text-blue-600 text-sm font-medium">
             Manage
         </a>
