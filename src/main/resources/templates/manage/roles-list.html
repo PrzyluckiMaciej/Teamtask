@@ -7,32 +7,57 @@
 <body class="bg-gray-50">
 <div th:replace="~{fragments/navbar :: header}"></div>
 
-<main class="max-w-2xl mx-auto p-8">
-    <div class="space-y-4 mb-6">
-        <div th:if="${error}" class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 flex items-center shadow-sm rounded-r-lg">
-            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm font-bold" th:text="${error}">Error message</span>
-        </div>
-
-        <div th:if="${success}" class="p-4 bg-green-50 border-l-4 border-green-500 text-green-700 flex items-center shadow-sm rounded-r-lg">
-            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm font-bold" th:text="${success}">Success message</span>
-        </div>
-    </div>
+<main class="max-w-4xl mx-auto p-8">
 
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-2xl font-bold text-gray-800">System Roles</h1>
-        <a th:href="@{/manage}" class="text-sm text-blue-600 hover:underline">← Back to Menu</a>
+
+        <a th:href="@{/manage}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors group">
+            <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Menu
+        </a>
+    </div>
+
+    <div class="space-y-4 mb-6">
+        <div th:if="${error}"
+             id="error-alert"
+             class="flex items-center justify-between p-4 bg-red-50 border-l-4 border-red-500 text-red-700 shadow-sm rounded-r-lg transition-opacity duration-300">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm font-bold" th:text="${error}">Error message</span>
+            </div>
+            <button onclick="document.getElementById('error-alert').style.display='none'" class="text-red-500 hover:text-red-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div th:if="${success}"
+             id="success-alert"
+             class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 text-green-700 shadow-sm rounded-r-lg transition-opacity duration-300">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm font-bold" th:text="${success}">Success message</span>
+            </div>
+            <button onclick="document.getElementById('success-alert').style.display='none'" class="text-green-500 hover:text-green-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
         <form th:action="@{/manage/roles}" method="post" class="flex gap-3">
-            <input type="text" name="name" placeholder="e.g., Project Manager"
-                   class="flex-1 p-2 border rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <input type="text" name="name" placeholder="New Role Name"
+                   class="flex-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">
                 Add Role
             </button>
@@ -44,32 +69,39 @@
             <tbody class="divide-y divide-gray-100">
             <tr th:each="role : ${roles}" class="hover:bg-gray-50 transition">
                 <td class="px-6 py-4 font-medium text-gray-900" th:text="${role.name}">Role Name</td>
-                <td class="px-6 py-4 text-right">
-                    <div class="flex justify-end items-center gap-4">
+
+                <td class="px-6 py-4 w-48">
+                    <div class="grid grid-cols-2 gap-4 items-center justify-items-end h-5">
 
                         <th:block th:if="${!role.name.equalsIgnoreCase('Admin')}">
                             <a th:href="@{/manage/roles/edit/{id}(id=${role.id})}"
-                               class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</a>
+                               class="text-blue-600 hover:text-blue-800 text-sm font-medium leading-none">
+                                Edit
+                            </a>
 
-                            <form th:if="${!roleUsageMap.get(role.id)}"
-                                  th:action="@{/manage/roles/{id}(id=${role.id})}" th:method="delete"
-                                  onsubmit="return confirm('Delete this role?')">
-                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                    Delete
-                                </button>
-                            </form>
-
-                            <span th:if="${roleUsageMap.get(role.id)}"
-                                  class="text-xs text-gray-400 cursor-help"
-                                  title="This role is assigned to users and cannot be deleted.">
-                    In Use
-                </span>
+                            <div class="flex justify-end">
+                                <form th:if="${!roleUsageMap.get(role.id)}"
+                                      th:action="@{/manage/roles/{id}(id=${role.id})}" th:method="delete"
+                                      class="m-0 p-0" onsubmit="return confirm('Delete this role?')">
+                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium leading-none p-0">
+                                        Delete
+                                    </button>
+                                </form>
+                                <span th:if="${roleUsageMap.get(role.id)}"
+                                      class="text-xs text-gray-400 font-medium italic leading-none whitespace-nowrap">
+                                        In Use
+                                    </span>
+                            </div>
                         </th:block>
 
-                        <span th:if="${role.name.equalsIgnoreCase('Admin')}"
-                              class="text-xs font-medium text-gray-400 italic">
-                System Protected
-            </span>
+                        <div th:if="${role.name.equalsIgnoreCase('Admin')}"
+                             class="col-start-2 flex items-center gap-1 text-gray-400">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            <span class="text-xs font-medium italic leading-none whitespace-nowrap">Protected</span>
+                        </div>
+
                     </div>
                 </td>
             </tr>
