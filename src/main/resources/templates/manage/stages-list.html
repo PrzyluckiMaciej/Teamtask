@@ -34,51 +34,76 @@
             <tr>
                 <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Preview</th>
                 <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Name</th>
-                <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500 text-right">Actions</th>
+                <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Status</th>
+                <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Default Setting</th>
+                <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500 text-center">Edit</th>
+                <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500 text-right">Delete</th>
             </tr>
             </thead>
+
             <tbody class="divide-y">
-            <tr th:each="stage : ${stages}">
+            <tr th:each="stage : ${stages}" th:with="inUse=${usageMap.get(stage.id)}">
                 <td class="px-6 py-4">
-                        <span th:text="${stage.name}"
-                              th:style="'background-color: ' + ${stage.color} + '22; color: ' + ${stage.color} + '; border: 1px solid ' + ${stage.color}"
-                              class="px-2.5 py-0.5 rounded-full text-xs font-bold"></span>
+                    <span th:text="${stage.name}"
+                          th:style="'background-color: ' + ${stage.color} + '22; color: ' + ${stage.color} + '; border: 1px solid ' + ${stage.color}"
+                          class="px-2.5 py-0.5 rounded-full text-xs font-bold"></span>
                 </td>
+
                 <td class="px-6 py-4">
-                    <span th:text="${stage.name}"></span>
-                    <span th:if="${stage.default}" class="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">Default</span>
+                    <span th:text="${stage.name}" class="font-medium text-gray-900"></span>
+                    <span th:if="${stage.default}"
+                          class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        Default
+                    </span>
                 </td>
-                <td class="px-6 py-4 text-right">
-                    <form th:if="${!stage.default}" th:action="@{/manage/stages/default/{id}(id=${stage.id})}" method="post" class="inline">
-                        <button type="submit" class="text-blue-600 hover:underline text-sm">Set Default</button>
+
+                <td class="px-6 py-4">
+                    <span th:if="${inUse}" class="inline-flex items-center text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-orange-400"></span>
+                        IN USE
+                    </span>
+                    <span th:unless="${inUse}" class="text-xs text-gray-400 italic">Unused</span>
+                </td>
+
+                <td class="px-6 py-4">
+                    <form th:if="${!stage.default}" th:action="@{/manage/stages/default/{id}(id=${stage.id})}" method="post" class="m-0">
+                        <button type="submit" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                            Make Default
+                        </button>
                     </form>
+                    <span th:if="${stage.default}" class="text-sm text-gray-400 font-medium flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Current
+                    </span>
                 </td>
+
+                <td class="px-6 py-4 text-center">
+                    <a th:href="@{/manage/stages/edit/{id}(id=${stage.id})}"
+                       class="inline-block text-gray-500 hover:text-blue-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </a>
+                </td>
+
                 <td class="px-6 py-4 text-right">
-                    <div class="flex justify-end items-center gap-3">
-                        <a th:href="@{/manage/stages/edit/{id}(id=${stage.id})}"
-                           class="text-blue-600 hover:underline text-sm font-medium">Edit</a>
-
-                        <th:block th:with="inUse=${usageMap.get(stage.id)}">
-
-                            <form th:if="${!stage.default && !inUse}"
-                                  th:action="@{/manage/stages/{id}(id=${stage.id})}"
-                                  th:method="delete"
-                                  onsubmit="return confirm('Are you sure?')">
-                                <button type="submit" class="text-red-600 hover:underline text-sm font-medium">
-                                    Delete
-                                </button>
-                            </form>
-
-                            <span th:if="${stage.default}"
-                                  class="text-xs font-bold text-gray-400 uppercase bg-gray-100 px-2 py-1 rounded">
-                                Default
-                            </span>
-                            <span th:if="${!stage.default && inUse}"
-                                  class="text-xs font-bold text-orange-400 uppercase bg-orange-50 px-2 py-1 rounded">
-                            In Use
-                        </span>
-
-                        </th:block>
+                    <form th:if="${!stage.default && !inUse}"
+                          th:action="@{/manage/stages/{id}(id=${stage.id})}"
+                          th:method="delete"
+                          class="m-0"
+                          onsubmit="return confirm('Are you sure you want to delete this stage?')">
+                        <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors">
+                            <svg class="w-5 h-5 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </form>
+                    <div th:if="${stage.default || inUse}" class="group relative inline-block">
+                        <svg class="w-5 h-5 ml-auto text-gray-200" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                 </td>
             </tr>
