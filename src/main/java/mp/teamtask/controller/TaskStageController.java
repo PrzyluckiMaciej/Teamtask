@@ -34,7 +34,7 @@ public class TaskStageController {
 
         model.addAttribute("stages", stages);
         model.addAttribute("usageMap", usageMap);
-        return "manage/stages-list";
+        return "manage/stages/stages-list";
     }
 
     @PostMapping
@@ -52,7 +52,7 @@ public class TaskStageController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("stage", stageService.getStageById(id));
-        return "manage/stages-edit";
+        return "manage/stages/stages-edit";
     }
 
     @PutMapping("/{id}")

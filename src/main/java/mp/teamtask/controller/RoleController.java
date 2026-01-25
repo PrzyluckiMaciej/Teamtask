@@ -34,7 +34,7 @@ public class RoleController {
 
         model.addAttribute("roles", roles);
         model.addAttribute("roleUsageMap", roleUsageMap);
-        return "manage/roles-list";
+        return "manage/roles/roles-list";
     }
 
     @PostMapping
@@ -62,7 +62,7 @@ public class RoleController {
         }
 
         model.addAttribute("role", role);
-        return "manage/roles-edit";
+        return "manage/roles/roles-edit";
     }
 
     @PutMapping("/{id}")

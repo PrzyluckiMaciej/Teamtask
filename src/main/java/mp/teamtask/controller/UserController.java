@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "manage/users-list";
+        return "manage/users/users-list";
     }
 
     @GetMapping("/edit/{id}")
@@ -36,7 +36,7 @@ public class UserController {
 
         model.addAttribute("user", user);
         model.addAttribute("roles", roleService.getAllRoles());
-        return "manage/users-edit";
+        return "manage/users/users-edit";
     }
 
     @PutMapping("/{id}")
@@ -76,7 +76,7 @@ public class UserController {
     public String showCreateForm(Model model) {
         model.addAttribute("user", new User()); // Using Entity or UserDTO
         model.addAttribute("roles", roleService.getAllRoles());
-        return "manage/users-create";
+        return "manage/users/users-create";
     }
 
     @PostMapping
