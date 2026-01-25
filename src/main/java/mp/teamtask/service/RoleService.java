@@ -6,6 +6,7 @@ import mp.teamtask.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,8 @@ public class RoleService {
                 .orElseThrow(() -> new IllegalArgumentException("Role not found with ID: " + id));
     }
 
-    public Role findByName(String name) {
-        return roleRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + name));
+    public Optional<Role> findByName(String name) {
+        return roleRepository.findByName(name);
     }
 
     public Role saveRole(Role role) {

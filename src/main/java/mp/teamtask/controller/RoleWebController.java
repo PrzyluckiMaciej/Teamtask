@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,8 +38,17 @@ public class RoleWebController {
     }
 
     @PostMapping
-    public String addRole(@RequestParam String name) {
-        roleService.getOrCreateRole(name);
+    public String addRole(@RequestParam String name, RedirectAttributes redirectAttributes) {
+        // Check if role exists (case-insensitive)
+        Optional<Role> existing = roleService.findByName(name);
+
+        if (existing.isPresent()) {
+            redirectAttributes.addFlashAttribute("error", "A role with the name '" + name + "' already exists.");
+            return "redirect:/manage/roles";
+        }
+
+        roleService.saveRole(new Role(null, name));
+        redirectAttributes.addFlashAttribute("success", "Role '" + name + "' added successfully.");
         return "redirect:/manage/roles";
     }
 
