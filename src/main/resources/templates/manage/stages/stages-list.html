@@ -24,6 +24,7 @@
         <form th:action="@{/manage/stages}" method="post" class="flex gap-4">
             <input type="text" name="name" placeholder="Stage Name (e.g. READY)" class="flex-1 p-2 border rounded" required>
             <input type="color" name="color" value="#3B82F6" class="h-10 w-20 border rounded cursor-pointer">
+            <input type="number" name="position" class="p-2 border rounded shadow-sm w-24" placeholder="0" required>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">Add</button>
         </form>
     </div>
@@ -32,6 +33,7 @@
         <table class="w-full text-left">
             <thead class="bg-gray-50 border-b">
             <tr>
+                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Position</th>
                 <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Preview</th>
                 <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Name</th>
                 <th class="px-6 py-3 text-xs font-bold uppercase text-gray-500">Status</th>
@@ -43,6 +45,8 @@
 
             <tbody class="divide-y">
             <tr th:each="stage : ${stages}" th:with="inUse=${usageMap.get(stage.id)}">
+                <td class="px-6 py-4 text-sm font-medium text-gray-600" th:text="${stage.position}">1</td>
+
                 <td class="px-6 py-4">
                     <span th:text="${stage.name}"
                           th:style="'background-color: ' + ${stage.color} + '22; color: ' + ${stage.color} + '; border: 1px solid ' + ${stage.color}"

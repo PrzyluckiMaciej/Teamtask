@@ -39,7 +39,7 @@ public class TaskStageController {
 
     @PostMapping
     public String addStage(@ModelAttribute TaskStage stage) {
-        stageService.getOrCreateStage(stage.getName(), stage.getColor(), false);
+        stageService.getOrCreateStage(stage.getName(), stage.getColor(), stage.getPosition(), false);
         return "redirect:/manage/stages";
     }
 
@@ -59,8 +59,9 @@ public class TaskStageController {
     public String updateStage(@PathVariable Long id,
                               @RequestParam String name,
                               @RequestParam String color,
+                              @RequestParam Integer position,
                               RedirectAttributes redirectAttributes) {
-        stageService.updateStage(id, name, color);
+        stageService.updateStage(id, name, color, position);
         redirectAttributes.addFlashAttribute("success", "Stage updated successfully.");
         return "redirect:/manage/stages";
     }

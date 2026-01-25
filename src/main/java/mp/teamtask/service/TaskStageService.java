@@ -15,7 +15,9 @@ public class TaskStageService {
     private final TaskStageRepository taskStageRepository;
     private final TaskRepository taskRepository;
 
-    public List<TaskStage> getAllStages() { return taskStageRepository.findAll(); }
+    public List<TaskStage> getAllStages() {
+        return taskStageRepository.findAllByOrderByPositionAsc();
+    }
 
     public TaskStage getDefaultStage() {
         return taskStageRepository.findAll().stream()
@@ -33,9 +35,9 @@ public class TaskStageService {
         taskStageRepository.save(newDefault);
     }
 
-    public TaskStage getOrCreateStage(String name, String color, boolean isDefault) {
+    public TaskStage getOrCreateStage(String name, String color, Integer position, boolean isDefault) {
         return taskStageRepository.findByName(name)
-                .orElseGet(() -> taskStageRepository.save(new TaskStage(null, name, color, isDefault)));
+                .orElseGet(() -> taskStageRepository.save(new TaskStage(null, name, color, isDefault, position)));
     }
 
     public TaskStage getStageById(Long id) {
@@ -44,10 +46,11 @@ public class TaskStageService {
     }
 
     @Transactional
-    public void updateStage(Long id, String name, String color) {
+    public void updateStage(Long id, String name, String color, Integer position) {
         TaskStage stage = getStageById(id);
         stage.setName(name);
         stage.setColor(color);
+        stage.setPosition(position); // Update position
         taskStageRepository.save(stage);
     }
 

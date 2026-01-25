@@ -22,4 +22,6 @@ public class TaskStage {
     private String color;
 
     private boolean isDefault = false;
+
+    private Integer position;
 }
