@@ -106,4 +106,47 @@ public class UserService implements UserDetailsService {
         }
         return true;
     }
+
+    @Transactional
+    public User updateProfile(Long userId, String firstName, String lastName, String email,
+                              String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Update name
+        if (firstName != null && !firstName.isEmpty()) {
+            user.setFirstName(firstName);
+        }
+
+        if (lastName != null && !lastName.isEmpty()) {
+            user.setLastName(lastName);
+        }
+
+        // Check if email is being changed
+        boolean emailChanged = false;
+        if (email != null && !email.isEmpty() && !email.equals(user.getEmail())) {
+            if (userRepository.existsByEmail(email)) {
+                throw new IllegalArgumentException("Email already exists");
+            }
+            user.setEmail(email);
+            emailChanged = true;
+        }
+
+        // Handle password change
+        if (newPassword != null && !newPassword.isEmpty()) {
+            if (currentPassword == null || currentPassword.isEmpty()) {
+                throw new IllegalArgumentException("Current password is required to change password");
+            }
+
+            // Verify current password
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                throw new IllegalArgumentException("Current password is incorrect");
+            }
+
+            // Update password
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
+
+        return userRepository.save(user);
+    }
 }

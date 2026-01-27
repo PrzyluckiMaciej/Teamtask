@@ -1,6 +1,7 @@
 package mp.teamtask.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
@@ -14,8 +15,11 @@ import mp.teamtask.service.TaskStageService;
 import mp.teamtask.service.UserService;
 import mp.teamtask.service.TaskService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -115,73 +119,74 @@ public class WebController {
                                 Authentication authentication,
                                 HttpServletRequest request,
                                 RedirectAttributes redirectAttributes) {
-        User currentUser = (User) authentication.getPrincipal();
-        User user = userService.getUserById(currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        boolean emailChanged = false;
+        User currentUser = (User) authentication.getPrincipal();
 
         try {
-            // Update basic info
-            user.setFirstName(profileDTO.getFirstName());
-            user.setLastName(profileDTO.getLastName());
+            // Update user in database
+            User updatedUser = userService.updateProfile(
+                    currentUser.getId(),
+                    profileDTO.getFirstName(),
+                    profileDTO.getLastName(),
+                    profileDTO.getEmail(),
+                    profileDTO.getCurrentPassword(),
+                    profileDTO.getNewPassword()
+            );
 
-            // Check if email is being changed
-            if (!user.getEmail().equals(profileDTO.getEmail())) {
-                if (userService.getUserByEmail(profileDTO.getEmail()).isPresent()) {
-                    redirectAttributes.addFlashAttribute("error", "Email already exists");
-                    return "redirect:/profile";
-                }
-                user.setEmail(profileDTO.getEmail());
-                emailChanged = true;
-            }
+            boolean emailChanged = !currentUser.getEmail().equals(updatedUser.getEmail());
 
-            // Handle password change
-            if (profileDTO.getNewPassword() != null && !profileDTO.getNewPassword().isEmpty()) {
-                if (profileDTO.getCurrentPassword() == null || profileDTO.getCurrentPassword().isEmpty()) {
-                    redirectAttributes.addFlashAttribute("error", "Current password is required to change password");
-                    return "redirect:/profile";
-                }
+            // Update the current principal for immediate UI update
+            currentUser.setFirstName(updatedUser.getFirstName());
+            currentUser.setLastName(updatedUser.getLastName());
 
-                if (!profileDTO.getNewPassword().equals(profileDTO.getConfirmPassword())) {
-                    redirectAttributes.addFlashAttribute("error", "New passwords do not match");
-                    return "redirect:/profile";
-                }
-
-                // Verify current password
-                if (!passwordEncoder.matches(profileDTO.getCurrentPassword(), user.getPassword())) {
-                    redirectAttributes.addFlashAttribute("error", "Current password is incorrect");
-                    return "redirect:/profile";
-                }
-
-                // Update password
-                user.setPassword(passwordEncoder.encode(profileDTO.getNewPassword()));
-            }
-
-            userService.updateUser(user.getId(), user);
-
-            // If email was changed, log the user out
             if (emailChanged) {
-                // Invalidate session
+                currentUser.setEmail(updatedUser.getEmail());
+
+                // If email changed, we need to log out
                 HttpSession session = request.getSession(false);
                 if (session != null) {
                     session.invalidate();
                 }
-
-                // Clear security context
                 SecurityContextHolder.clearContext();
 
                 redirectAttributes.addFlashAttribute("success",
                         "Profile updated successfully. Please log in with your new email.");
                 return "redirect:/login?emailChanged";
+            } else {
+                // Only update password in principal if it was changed
+                if (profileDTO.getNewPassword() != null && !profileDTO.getNewPassword().isEmpty()) {
+                    // Don't set the encoded password in the principal, just acknowledge it was changed
+                }
+
+                redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
+                return "redirect:/profile";
             }
 
-            redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
-
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/profile";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error updating profile: " + e.getMessage());
+            return "redirect:/profile";
         }
+    }
 
-        return "redirect:/profile";
+    private void refreshAuthentication(User updatedUser, HttpServletRequest request) {
+        // Create a new authentication token with updated user details
+        UserDetails userDetails = userService.loadUserByUsername(updatedUser.getEmail());
+        UsernamePasswordAuthenticationToken newAuth =
+                new UsernamePasswordAuthenticationToken(userDetails,
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities());
+
+        // Set the new authentication in the security context
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(newAuth);
+
+        // Update the session
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+        }
     }
 }

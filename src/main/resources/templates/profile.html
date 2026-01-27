@@ -115,14 +115,15 @@
         const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
         const currentPassword = document.querySelector('input[name="currentPassword"]').value;
 
-        if (newPassword || confirmPassword) {
+        // Only validate if new password is entered
+        if (newPassword || confirmPassword || currentPassword) {
             if (newPassword !== confirmPassword) {
                 e.preventDefault();
                 alert('New password and confirmation do not match.');
                 return false;
             }
 
-            if (!currentPassword) {
+            if (newPassword && !currentPassword) {
                 e.preventDefault();
                 alert('Please enter your current password to change your password.');
                 return false;

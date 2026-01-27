@@ -16,7 +16,7 @@ public class ProfileDTO {
     @NotBlank(message = "Email is required")
     private String email;
 
-    private String currentPassword;
-    private String newPassword;
-    private String confirmPassword;
+    private String currentPassword = "";
+    private String newPassword = "";
+    private String confirmPassword = "";
 }
