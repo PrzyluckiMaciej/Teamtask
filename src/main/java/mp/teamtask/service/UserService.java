@@ -56,12 +56,21 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setRole(userDetails.getRole());
+        // Only update if provided (not null and not empty)
+        if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
+            user.setFirstName(userDetails.getFirstName());
+        }
 
-        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        if (userDetails.getLastName() != null && !userDetails.getLastName().isEmpty()) {
+            user.setLastName(userDetails.getLastName());
+        }
+
+        if (userDetails.getEmail() != null && !userDetails.getEmail().isEmpty()) {
+            user.setEmail(userDetails.getEmail());
+        }
+
+        if (userDetails.getRole() != null) {
+            user.setRole(userDetails.getRole());
         }
 
         return userRepository.save(user);
