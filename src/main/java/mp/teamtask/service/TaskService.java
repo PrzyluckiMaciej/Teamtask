@@ -11,8 +11,10 @@ import mp.teamtask.repository.TaskStageRepository;
 import mp.teamtask.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +93,15 @@ public class TaskService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         return taskRepository.findByAssignee(user);
+    }
+
+    public List<Task> getFilteredTasks(Long assigneeId, LocalDate start, LocalDate end) {
+        List<Task> allTasks = taskRepository.findAll();
+
+        return allTasks.stream()
+                .filter(t -> assigneeId == null || (t.getAssignee() != null && t.getAssignee().getId().equals(assigneeId)))
+                .filter(t -> start == null || !t.getCreatedAt().toLocalDate().isBefore(start))
+                .filter(t -> end == null || !t.getCreatedAt().toLocalDate().isAfter(end))
+                .collect(Collectors.toList());
     }
 }

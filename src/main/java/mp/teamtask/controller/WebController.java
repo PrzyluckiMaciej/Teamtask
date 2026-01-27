@@ -10,6 +10,7 @@ import mp.teamtask.service.RoleService;
 import mp.teamtask.service.TaskStageService;
 import mp.teamtask.service.UserService;
 import mp.teamtask.service.TaskService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -66,17 +68,24 @@ public class WebController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(@RequestParam(required = false) boolean myTasks, Model model, Authentication authentication) {
-        List<Task> tasks;
-        if (myTasks) {
-            User currentUser = (User) authentication.getPrincipal();
-            tasks = taskService.getTasksByAssignee(currentUser.getId());
-        } else {
-            tasks = taskService.getAllTasks();
-        }
+    public String dashboard(
+            @RequestParam(required = false) Long assigneeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Model model) {
+
+        // Fetch tasks using a flexible filtering approach
+        List<Task> tasks = taskService.getFilteredTasks(assigneeId, startDate, endDate);
 
         model.addAttribute("tasks", tasks);
         model.addAttribute("stages", taskStageService.getAllStages());
+        model.addAttribute("users", userService.getAllUsers());
+
+        // Keep track of selected filters to persist them in the UI
+        model.addAttribute("selectedAssigneeId", assigneeId);
+        model.addAttribute("selectedStartDate", startDate);
+        model.addAttribute("selectedEndDate", endDate);
+
         return "dashboard";
     }
 }
