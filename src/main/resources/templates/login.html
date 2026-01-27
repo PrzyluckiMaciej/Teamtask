@@ -29,6 +29,10 @@
         <div th:if="${param.success}" class="p-3 bg-green-100 border-l-4 border-green-500 text-green-700 text-sm font-medium rounded">
             Registration successful! Please log in.
         </div>
+
+        <div th:if="${param.emailChanged}" class="p-3 bg-blue-100 border-l-4 border-blue-500 text-blue-700 text-sm font-medium rounded">
+            Your email has been updated. Please log in with your new email address.
+        </div>
     </div>
 
     <form th:action="@{/login}" method="post" class="space-y-5">

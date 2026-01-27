@@ -1,5 +1,7 @@
 package mp.teamtask.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
 import mp.teamtask.domain.Task;
@@ -13,6 +15,7 @@ import mp.teamtask.service.UserService;
 import mp.teamtask.service.TaskService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -110,10 +113,13 @@ public class WebController {
     @PostMapping("/profile")
     public String updateProfile(@ModelAttribute("user") ProfileDTO profileDTO,
                                 Authentication authentication,
+                                HttpServletRequest request,
                                 RedirectAttributes redirectAttributes) {
         User currentUser = (User) authentication.getPrincipal();
         User user = userService.getUserById(currentUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        boolean emailChanged = false;
 
         try {
             // Update basic info
@@ -127,6 +133,7 @@ public class WebController {
                     return "redirect:/profile";
                 }
                 user.setEmail(profileDTO.getEmail());
+                emailChanged = true;
             }
 
             // Handle password change
@@ -152,6 +159,23 @@ public class WebController {
             }
 
             userService.updateUser(user.getId(), user);
+
+            // If email was changed, log the user out
+            if (emailChanged) {
+                // Invalidate session
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    session.invalidate();
+                }
+
+                // Clear security context
+                SecurityContextHolder.clearContext();
+
+                redirectAttributes.addFlashAttribute("success",
+                        "Profile updated successfully. Please log in with your new email.");
+                return "redirect:/login?emailChanged";
+            }
+
             redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
 
         } catch (Exception e) {
