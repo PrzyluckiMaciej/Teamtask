@@ -7,65 +7,79 @@
 <body class="bg-gray-50">
 <div th:replace="~{fragments/navbar :: header}"></div>
 
-<main class="max-w-lg mx-auto p-8">
-    <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-800">Edit Task Stage</h2>
+<main class="max-w-4xl mx-auto p-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-8 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Edit Task Stage</h2>
+                <p class="text-sm text-gray-500">Configure how this stage appears across your workspace.</p>
+            </div>
             <span th:if="${stage.default}"
-                  class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-md font-bold uppercase">
-                Default Stage
-            </span>
+                  class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-md font-bold uppercase">
+                    Default Stage
+                </span>
         </div>
 
-        <form th:action="@{/manage/stages/{id}(id=${stage.id})}" th:object="${stage}" th:method="put" class="space-y-6">
+        <form th:action="@{/manage/stages/{id}(id=${stage.id})}" th:object="${stage}" th:method="put">
             <input type="hidden" th:field="*{id}">
             <input type="hidden" th:field="*{default}">
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Stage Name</label>
-                <input type="text" th:field="*{name}"
-                       class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
-                       placeholder="e.g., IN REVIEW"
-                       required>
-                <p class="mt-2 text-xs text-gray-400 italic">
-                    Note: Renaming this stage will update all existing tasks currently in this status.
-                </p>
-            </div>
+            <div class="flex flex-col md:flex-row">
+                <div class="flex-1 p-8 space-y-6 border-r border-gray-100">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Stage Name</label>
+                        <input type="text" th:field="*{name}" id="stage-name-input"
+                               class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+                               placeholder="e.g., IN REVIEW" required>
+                    </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Display Position</label>
-                <input type="number" th:field="*{position}"
-                       class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                       required>
-                <p class="mt-1 text-xs text-gray-400">Lower numbers appear first in the dashboard.</p>
-            </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Display Position</label>
+                        <input type="number" th:field="*{position}"
+                               class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+                        <p class="mt-1 text-xs text-gray-400">Lower numbers appear first (e.g., 0, 1, 2).</p>
+                    </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Label Color</label>
-                <div class="flex items-center gap-4">
-                    <input type="color" th:field="*{color}"
-                           class="h-12 w-24 border rounded cursor-pointer p-1">
-                    <div class="text-sm text-gray-500">
-                        Select a color to represent this stage on the dashboard.
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Label Color</label>
+                        <div class="flex items-center gap-4">
+                            <input type="color" th:field="*{color}"
+                                   class="h-10 w-20 border-0 rounded-md cursor-pointer p-0 overflow-hidden">
+                            <span class="text-sm text-gray-500 font-mono" th:text="*{color}">#000000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-80 bg-gray-50/30 p-8 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Live Preview</h3>
+                        <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[120px]">
+                                 <span id="preview-badge"
+                                       th:text="*{name != null && name != '' ? name : 'PREVIEW'}"
+                                       th:style="'background-color: ' + *{color} + '22; color: ' + *{color} + '; border: 1px solid ' + *{color}"
+                                       class="px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider transition-all">
+                                </span>
+                            <p class="mt-4 text-[10px] text-center text-gray-400 leading-relaxed">
+                                This is how your stage will look<br>on the main kanban board.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="text-xs text-gray-400 italic bg-amber-50 p-3 rounded-lg border border-amber-100 text-amber-700">
+                            <strong>Note:</strong> Renaming this stage will update all existing tasks currently in this status.
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                <p class="text-xs font-bold text-gray-400 uppercase mb-2">Dashboard Preview</p>
-                <span th:text="*{name != null && name != '' ? name : 'PREVIEW'}"
-                      th:style="'background-color: ' + *{color} + '22; color: ' + *{color} + '; border: 1px solid ' + *{color}"
-                      class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                </span>
-            </div>
-
-            <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+            <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-6">
                 <a th:href="@{/manage/stages}" class="text-sm text-gray-500 hover:text-gray-700 font-medium">
                     Cancel
                 </a>
                 <button type="submit"
-                        class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition shadow-md active:scale-95">
-                    Update Stage
+                        class="bg-blue-600 text-white px-8 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition shadow-md active:scale-95">
+                    Save Changes
                 </button>
             </div>
         </form>
@@ -73,17 +87,19 @@
 </main>
 
 <script>
-    // Live preview update for the color picker
+    // Targeted selectors to avoid navbar interference
     const colorInput = document.querySelector('input[type="color"]');
-    const nameInput = document.querySelector('input[name="name"]');
-    const previewBadge = document.querySelector('.rounded-full');
+    const nameInput = document.getElementById('stage-name-input');
+    const previewBadge = document.getElementById('preview-badge');
 
     function updatePreview() {
+        if (!previewBadge) return; // Safety check
+
         const color = colorInput.value;
-        const name = nameInput.value || 'PREVIEW';
+        const name = nameInput.value.trim() || 'PREVIEW';
 
         previewBadge.innerText = name.toUpperCase();
-        previewBadge.style.backgroundColor = color + '22'; // 22 is ~13% opacity in hex
+        previewBadge.style.backgroundColor = color + '22';
         previewBadge.style.color = color;
         previewBadge.style.borderColor = color;
     }
