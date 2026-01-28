@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -55,27 +56,43 @@ public class WebController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("user", new UserDTO());
-        // Fetch all roles from the database instead of the Enum
-        model.addAttribute("roles", roleService.getAllRoles());
+        // Fetch all roles from the database and filter out "Admin"
+        List<Role> allRoles = roleService.getAllRoles();
+        List<Role> filteredRoles = allRoles.stream()
+                .filter(role -> !role.getName().equalsIgnoreCase("Admin"))
+                .collect(Collectors.toList());
+        model.addAttribute("roles", filteredRoles);
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserDTO userDTO) {
-        User user = new User();
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
+    public String registerUser(@ModelAttribute("user") UserDTO userDTO, RedirectAttributes redirectAttributes) {
+        try {
+            User user = new User();
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(userDTO.getPassword());
 
-        // Fetch the Role entity using the ID from the DTO
-        if (userDTO.getRoleId() != null) {
-            Role role = roleService.getRoleById(userDTO.getRoleId());
-            user.setRole(role);
+            // Get the requested role
+            if (userDTO.getRoleId() != null) {
+                Role role = roleService.getRoleById(userDTO.getRoleId());
+
+                // SERVER-SIDE VALIDATION: Prevent registering as Admin
+                if (role.getName().equalsIgnoreCase("Admin")) {
+                    redirectAttributes.addFlashAttribute("error", "Cannot register with Admin role.");
+                    return "redirect:/register";
+                }
+
+                user.setRole(role);
+            }
+
+            userService.registerUser(user);
+            return "redirect:/login?success";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/register";
         }
-
-        userService.registerUser(user);
-        return "redirect:/login?success";
     }
 
     @GetMapping("/dashboard")
