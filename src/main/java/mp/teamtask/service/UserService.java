@@ -6,6 +6,7 @@ import mp.teamtask.domain.Task;
 import mp.teamtask.domain.User;
 import mp.teamtask.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,16 +54,21 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    public User updateUser(Long id, User userDetails) {
+    public User updateUser(Long id, User userDetails, Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        boolean selfUpdate = currentUser.getId().equals(id);
+        boolean roleChanged = false;
 
         // Check if trying to change role away from Admin when last admin
         boolean isCurrentAdmin = user.getRole().getName().equalsIgnoreCase("Admin");
 
-        if (isCurrentAdmin && userDetails.getRole() != null) {
+        if (userDetails.getRole() != null) {
             Role newRole = userDetails.getRole();
-            boolean isChangingFromAdmin = !newRole.getName().equalsIgnoreCase("Admin");
+            roleChanged = !user.getRole().getId().equals(newRole.getId());
+            boolean isChangingFromAdmin = isCurrentAdmin && !newRole.getName().equalsIgnoreCase("Admin");
 
             if (isChangingFromAdmin) {
                 long adminCount = userRepository.findAll().stream()
@@ -75,6 +81,8 @@ public class UserService implements UserDetailsService {
                                     "Ensure another admin exists before changing roles.");
                 }
             }
+
+            user.setRole(newRole);
         }
 
         // Only update if provided (not null and not empty)
@@ -90,11 +98,10 @@ public class UserService implements UserDetailsService {
             user.setEmail(userDetails.getEmail());
         }
 
-        if (userDetails.getRole() != null) {
-            user.setRole(userDetails.getRole());
-        }
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        // Return both the saved user and a flag indicating if role changed
+        return savedUser;
     }
 
     @Transactional

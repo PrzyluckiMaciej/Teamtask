@@ -45,35 +45,44 @@ public class UserController {
                              @ModelAttribute("user") User userDetails,
                              @RequestParam(value = "roleId", required = false) Long roleId,
                              Authentication authentication,
+                             HttpServletRequest request,
                              RedirectAttributes redirectAttributes) {
 
         User currentUser = (User) authentication.getPrincipal();
         User existingUser = userService.getUserById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
 
+        boolean roleChanged = false;
+        boolean selfRoleChange = currentUser.getId().equals(id);
+
         // Check if trying to change the role
         if (roleId != null) {
             Role newRole = roleService.getRoleById(roleId);
 
-            // Check if the user is currently an admin
-            boolean isCurrentAdmin = existingUser.getRole().getName().equalsIgnoreCase("Admin");
-            boolean isChangingToAdmin = newRole.getName().equalsIgnoreCase("Admin");
+            // Check if the role is actually changing
+            if (!existingUser.getRole().getId().equals(newRole.getId())) {
+                roleChanged = true;
 
-            // If changing from admin to non-admin
-            if (isCurrentAdmin && !isChangingToAdmin) {
-                // Check if this is the last admin
-                long adminCount = userService.countAdmins();
+                // Check if the user is currently an admin
+                boolean isCurrentAdmin = existingUser.getRole().getName().equalsIgnoreCase("Admin");
+                boolean isChangingToAdmin = newRole.getName().equalsIgnoreCase("Admin");
 
-                if (adminCount <= 1) {
-                    redirectAttributes.addFlashAttribute("error",
-                            "Cannot change role: This is the only administrator account. " +
-                                    "Ensure another admin exists before changing roles.");
-                    return "redirect:/manage/users";
+                // If changing from admin to non-admin
+                if (isCurrentAdmin && !isChangingToAdmin) {
+                    // Check if this is the last admin
+                    long adminCount = userService.countAdmins();
+
+                    if (adminCount <= 1) {
+                        redirectAttributes.addFlashAttribute("error",
+                                "Cannot change role: This is the only administrator account. " +
+                                        "Ensure another admin exists before changing roles.");
+                        return "redirect:/manage/users";
+                    }
                 }
-            }
 
-            // Set the new role
-            existingUser.setRole(newRole);
+                // Set the new role
+                existingUser.setRole(newRole);
+            }
         }
 
         // Update other fields
@@ -90,6 +99,24 @@ public class UserController {
         }
 
         userService.saveUser(existingUser);
+
+        // If the current user changed their own role AND they're no longer admin, log them out
+        if (selfRoleChange && roleChanged) {
+            Role newRole = existingUser.getRole();
+            if (!newRole.getName().equalsIgnoreCase("Admin")) {
+                // Invalidate session and redirect to login
+                SecurityContextHolder.clearContext();
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    session.invalidate();
+                }
+
+                redirectAttributes.addFlashAttribute("success",
+                        "Your role has been changed. Please log in with your new permissions.");
+                return "redirect:/login?roleChanged";
+            }
+        }
+
         return "redirect:/manage/users";
     }
 
