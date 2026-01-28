@@ -18,16 +18,11 @@ public class ProfileDTO {
     @NotBlank(message = "Email is required")
     private String email;
 
-    @Size(min = 6, message = "Password must be at least 6 characters")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
-            message = "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    )
     private String currentPassword = "";
 
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 0, max = 100, message = "Password cannot exceed 100 characters")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
+            regexp = "^(|(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+)$",
             message = "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     )
     private String newPassword = "";

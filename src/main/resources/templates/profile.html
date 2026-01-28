@@ -150,6 +150,7 @@
         const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
         const currentPassword = document.querySelector('input[name="currentPassword"]').value;
 
+        // Only validate passwords if ANY password field is filled
         if (newPassword || confirmPassword || currentPassword) {
             if (newPassword !== confirmPassword) {
                 e.preventDefault();
@@ -161,6 +162,8 @@
                 alert('Please enter your current password to change your password.');
                 return false;
             }
+            // Note: We don't need to validate password complexity here
+            // as it's handled by server-side validation with the updated regex
         }
     });
 </script>
