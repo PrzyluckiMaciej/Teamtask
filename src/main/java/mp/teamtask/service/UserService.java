@@ -169,6 +169,9 @@ public class UserService implements UserDetailsService {
                 throw new IllegalArgumentException("Current password is incorrect");
             }
 
+            // Validate new password
+            validatePassword(newPassword);
+
             // Update password
             user.setPassword(passwordEncoder.encode(newPassword));
         }
@@ -178,5 +181,26 @@ public class UserService implements UserDetailsService {
 
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    private void validatePassword(String password) {
+        if (password == null || password.length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters long");
+        }
+
+        // Check for at least one uppercase letter
+        if (!password.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+        }
+
+        // Check for at least one lowercase letter
+        if (!password.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one lowercase letter");
+        }
+
+        // Check for at least one digit
+        if (!password.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("Password must contain at least one number");
+        }
     }
 }

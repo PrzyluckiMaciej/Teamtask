@@ -15,22 +15,52 @@
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">First Name</label>
-                    <input type="text" th:field="*{firstName}" class="w-full p-2 border rounded mt-1 shadow-sm" required>
+                    <input type="text" th:field="*{firstName}"
+                           class="w-full p-2 border rounded mt-1 shadow-sm"
+                           :class="${#fields.hasErrors('firstName') ? 'border-red-500' : ''}"
+                           required>
+                    <div th:if="${#fields.hasErrors('firstName')}" class="text-red-500 text-xs mt-1">
+                        <span th:errors="*{firstName}"></span>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Last Name</label>
-                    <input type="text" th:field="*{lastName}" class="w-full p-2 border rounded mt-1 shadow-sm" required>
+                    <input type="text" th:field="*{lastName}"
+                           class="w-full p-2 border rounded mt-1 shadow-sm"
+                           :class="${#fields.hasErrors('lastName') ? 'border-red-500' : ''}"
+                           required>
+                    <div th:if="${#fields.hasErrors('lastName')}" class="text-red-500 text-xs mt-1">
+                        <span th:errors="*{lastName}"></span>
+                    </div>
                 </div>
             </div>
 
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Email Address</label>
-                <input type="email" th:field="*{email}" class="w-full p-2 border rounded mt-1 shadow-sm" required>
+                <input type="email" th:field="*{email}"
+                       class="w-full p-2 border rounded mt-1 shadow-sm"
+                       :class="${#fields.hasErrors('email') ? 'border-red-500' : ''}"
+                       required>
+                <div th:if="${#fields.hasErrors('email')}" class="text-red-500 text-xs mt-1">
+                    <span th:errors="*{email}"></span>
+                </div>
             </div>
 
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Initial Password</label>
-                <input type="password" th:field="*{password}" class="w-full p-2 border rounded mt-1 shadow-sm" required>
+                <input type="password" th:field="*{password}"
+                       class="w-full p-2 border rounded mt-1 shadow-sm"
+                       :class="${#fields.hasErrors('password') ? 'border-red-500' : ''}"
+                       required>
+                <div th:if="${#fields.hasErrors('password')}" class="text-red-500 text-xs mt-1">
+                    <span th:errors="*{password}"></span>
+                </div>
+                <div class="mt-1 text-xs text-gray-500">
+                    • At least 6 characters<br>
+                    • At least one uppercase letter<br>
+                    • At least one lowercase letter<br>
+                    • At least one number
+                </div>
             </div>
 
             <div class="mb-6">

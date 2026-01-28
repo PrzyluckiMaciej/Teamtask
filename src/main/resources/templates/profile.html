@@ -47,19 +47,31 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                             <input type="text" th:field="*{firstName}"
                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                                   :class="${#fields.hasErrors('firstName') ? 'border-red-500' : ''}"
                                    required>
+                            <div th:if="${#fields.hasErrors('firstName')}" class="text-red-500 text-xs mt-1">
+                                <span th:errors="*{firstName}"></span>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                             <input type="text" th:field="*{lastName}"
                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                                   :class="${#fields.hasErrors('lastName') ? 'border-red-500' : ''}"
                                    required>
+                            <div th:if="${#fields.hasErrors('lastName')}" class="text-red-500 text-xs mt-1">
+                                <span th:errors="*{lastName}"></span>
+                            </div>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                             <input type="email" th:field="*{email}"
                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                                   :class="${#fields.hasErrors('email') ? 'border-red-500' : ''}"
                                    required>
+                            <div th:if="${#fields.hasErrors('email')}" class="text-red-500 text-xs mt-1">
+                                <span th:errors="*{email}"></span>
+                            </div>
                             <p class="mt-2 text-xs text-amber-600 italic">
                                 Note: Changing your email will log you out and require a new login.
                             </p>
@@ -79,21 +91,40 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                            <input type="password" name="currentPassword"
+                            <input type="password" th:field="*{currentPassword}"
                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"
+                                   :class="${#fields.hasErrors('currentPassword') ? 'border-red-500' : ''}"
                                    placeholder="Current password">
+                            <div th:if="${#fields.hasErrors('currentPassword')}" class="text-red-500 text-xs mt-1">
+                                <span th:errors="*{currentPassword}"></span>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                            <input type="password" name="newPassword"
+                            <input type="password" th:field="*{newPassword}"
                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"
+                                   :class="${#fields.hasErrors('newPassword') ? 'border-red-500' : ''}"
                                    placeholder="New password">
+                            <div th:if="${#fields.hasErrors('newPassword')}" class="text-red-500 text-xs mt-1">
+                                <span th:errors="*{newPassword}"></span>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                            <input type="password" name="confirmPassword"
+                            <input type="password" th:field="*{confirmPassword}"
                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"
+                                   :class="${#fields.hasErrors('confirmPassword') ? 'border-red-500' : ''}"
                                    placeholder="Confirm new password">
+                            <div th:if="${#fields.hasErrors('confirmPassword')}" class="text-red-500 text-xs mt-1">
+                                <span th:errors="*{confirmPassword}"></span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            Password requirements:<br>
+                            • At least 6 characters<br>
+                            • At least one uppercase letter<br>
+                            • At least one lowercase letter<br>
+                            • At least one number
                         </div>
                     </div>
                 </div>

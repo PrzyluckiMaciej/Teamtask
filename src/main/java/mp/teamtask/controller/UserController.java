@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
 import mp.teamtask.domain.User;
+import mp.teamtask.dto.UserDTO;
 import mp.teamtask.service.RoleService;
 import mp.teamtask.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,8 +13,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/manage/users")
@@ -149,15 +153,38 @@ public class UserController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("user", new User()); // Using Entity or UserDTO
+        model.addAttribute("user", new UserDTO());
         model.addAttribute("roles", roleService.getAllRoles());
         return "manage/users/users-create";
     }
 
     @PostMapping
-    public String registerNewUser(@ModelAttribute("user") User user, @RequestParam Long roleId) {
-        user.setRole(roleService.getRoleById(roleId));
-        userService.registerUser(user);
-        return "redirect:/manage/users?created";
+    public String registerNewUser(@Valid @ModelAttribute("user") UserDTO userDTO,
+                                  BindingResult bindingResult,
+                                  @RequestParam Long roleId,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
+
+        // Add roles back to model in case of errors
+        model.addAttribute("roles", roleService.getAllRoles());
+
+        if (bindingResult.hasErrors()) {
+            return "manage/users/users-create";
+        }
+
+        try {
+            User user = new User();
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(userDTO.getPassword());
+            user.setRole(roleService.getRoleById(roleId));
+
+            userService.registerUser(user);
+            return "redirect:/manage/users?created";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/manage/users/new";
+        }
     }
 }

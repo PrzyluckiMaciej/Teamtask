@@ -1,7 +1,6 @@
 package mp.teamtask.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
@@ -23,12 +22,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,7 +68,22 @@ public class WebController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserDTO userDTO, RedirectAttributes redirectAttributes) {
+    public String registerUser(@Valid @ModelAttribute("user") UserDTO userDTO,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
+
+        // Fetch roles for the form in case of errors
+        List<Role> allRoles = roleService.getAllRoles();
+        List<Role> filteredRoles = allRoles.stream()
+                .filter(role -> !role.getName().equalsIgnoreCase("Admin"))
+                .collect(Collectors.toList());
+        model.addAttribute("roles", filteredRoles);
+
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+
         try {
             User user = new User();
             user.setFirstName(userDTO.getFirstName());
@@ -132,10 +149,24 @@ public class WebController {
     }
 
     @PostMapping("/profile")
-    public String updateProfile(@ModelAttribute("user") ProfileDTO profileDTO,
+    public String updateProfile(@Valid @ModelAttribute("user") ProfileDTO profileDTO,
+                                BindingResult bindingResult,
                                 Authentication authentication,
                                 HttpServletRequest request,
                                 RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "profile";
+        }
+
+        // Custom validation for password confirmation
+        if (profileDTO.getNewPassword() != null && !profileDTO.getNewPassword().isEmpty()) {
+            if (!profileDTO.getNewPassword().equals(profileDTO.getConfirmPassword())) {
+                bindingResult.addError(new FieldError("user", "confirmPassword",
+                        "New password and confirmation do not match"));
+                return "profile";
+            }
+        }
 
         User currentUser = (User) authentication.getPrincipal();
 
