@@ -1,6 +1,7 @@
 package mp.teamtask.service;
 
 import jakarta.transaction.Transactional;
+import mp.teamtask.domain.Role;
 import mp.teamtask.domain.Task;
 import mp.teamtask.domain.User;
 import mp.teamtask.repository.UserRepository;
@@ -56,6 +57,26 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // Check if trying to change role away from Admin when last admin
+        boolean isCurrentAdmin = user.getRole().getName().equalsIgnoreCase("Admin");
+
+        if (isCurrentAdmin && userDetails.getRole() != null) {
+            Role newRole = userDetails.getRole();
+            boolean isChangingFromAdmin = !newRole.getName().equalsIgnoreCase("Admin");
+
+            if (isChangingFromAdmin) {
+                long adminCount = userRepository.findAll().stream()
+                        .filter(u -> u.getRole().getName().equalsIgnoreCase("Admin"))
+                        .count();
+
+                if (adminCount <= 1) {
+                    throw new IllegalStateException(
+                            "Cannot change role: This is the only administrator account. " +
+                                    "Ensure another admin exists before changing roles.");
+                }
+            }
+        }
+
         // Only update if provided (not null and not empty)
         if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
             user.setFirstName(userDetails.getFirstName());
@@ -91,9 +112,7 @@ public class UserService implements UserDetailsService {
     }
 
     public long countAdmins() {
-        return userRepository.findAll().stream()
-                .filter(u -> u.getRole().getName().equalsIgnoreCase("Admin"))
-                .count();
+        return userRepository.countAdmins();
     }
 
     public boolean canDeleteUser(Long id) {
@@ -147,6 +166,10 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(newPassword));
         }
 
+        return userRepository.save(user);
+    }
+
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 }

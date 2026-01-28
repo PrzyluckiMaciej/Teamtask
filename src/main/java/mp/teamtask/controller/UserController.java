@@ -3,6 +3,7 @@ package mp.teamtask.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import mp.teamtask.domain.Role;
 import mp.teamtask.domain.User;
 import mp.teamtask.service.RoleService;
 import mp.teamtask.service.UserService;
@@ -40,8 +41,55 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User userDetails) {
-        userService.updateUser(id, userDetails);
+    public String updateUser(@PathVariable Long id,
+                             @ModelAttribute("user") User userDetails,
+                             @RequestParam(value = "roleId", required = false) Long roleId,
+                             Authentication authentication,
+                             RedirectAttributes redirectAttributes) {
+
+        User currentUser = (User) authentication.getPrincipal();
+        User existingUser = userService.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+
+        // Check if trying to change the role
+        if (roleId != null) {
+            Role newRole = roleService.getRoleById(roleId);
+
+            // Check if the user is currently an admin
+            boolean isCurrentAdmin = existingUser.getRole().getName().equalsIgnoreCase("Admin");
+            boolean isChangingToAdmin = newRole.getName().equalsIgnoreCase("Admin");
+
+            // If changing from admin to non-admin
+            if (isCurrentAdmin && !isChangingToAdmin) {
+                // Check if this is the last admin
+                long adminCount = userService.countAdmins();
+
+                if (adminCount <= 1) {
+                    redirectAttributes.addFlashAttribute("error",
+                            "Cannot change role: This is the only administrator account. " +
+                                    "Ensure another admin exists before changing roles.");
+                    return "redirect:/manage/users";
+                }
+            }
+
+            // Set the new role
+            existingUser.setRole(newRole);
+        }
+
+        // Update other fields
+        if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
+            existingUser.setFirstName(userDetails.getFirstName());
+        }
+
+        if (userDetails.getLastName() != null && !userDetails.getLastName().isEmpty()) {
+            existingUser.setLastName(userDetails.getLastName());
+        }
+
+        if (userDetails.getEmail() != null && !userDetails.getEmail().isEmpty()) {
+            existingUser.setEmail(userDetails.getEmail());
+        }
+
+        userService.saveUser(existingUser);
         return "redirect:/manage/users";
     }
 
