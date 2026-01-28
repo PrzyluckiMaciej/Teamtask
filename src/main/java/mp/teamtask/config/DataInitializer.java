@@ -29,7 +29,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setFirstName("Admin");
             admin.setLastName("User");
             admin.setEmail("admin@teamtask.com");
-            admin.setPassword("admin123");
+            admin.setPassword("Admin123");
             admin.setRole(adminRole);
 
             userService.registerUser(admin);
@@ -42,7 +42,7 @@ public class DataInitializer implements CommandLineRunner {
             programmer.setFirstName("John");
             programmer.setLastName("Programmer");
             programmer.setEmail("programmer@teamtask.com");
-            programmer.setPassword("programmer123");
+            programmer.setPassword("Programmer123");
             programmer.setRole(programmerRole);
 
             userService.registerUser(programmer);
@@ -55,7 +55,7 @@ public class DataInitializer implements CommandLineRunner {
             tester.setFirstName("Jane");
             tester.setLastName("Tester");
             tester.setEmail("tester@teamtask.com");
-            tester.setPassword("tester123");
+            tester.setPassword("Tester123");
             tester.setRole(testerRole);
 
             userService.registerUser(tester);
