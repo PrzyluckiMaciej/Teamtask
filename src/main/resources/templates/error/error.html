@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error <span th:text="${status}"></span> - TeamTask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .error-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .error-code {
+            font-size: 6rem;
+            line-height: 1;
+            font-weight: 900;
+            color: #1e293b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .error-badge {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: #ef4444;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        /* Animation classes */
+        .details-enter {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+        }
+        .details-enter-active {
+            max-height: 200px;
+            opacity: 1;
+        }
+        .details-exit {
+            max-height: 200px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in, opacity 0.2s ease-in;
+        }
+        .details-exit-active {
+            max-height: 0;
+            opacity: 0;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+        .rotate-0 {
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="error-bg min-h-screen flex items-center justify-center p-4">
+<div class="max-w-md w-full">
+    <div class="relative">
+        <!-- Error Icon -->
+        <div th:switch="${status}" class="flex justify-center mb-8">
+            <div th:case="403" class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center">
+                <svg class="w-24 h-24 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+            <div th:case="404" class="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg class="w-24 h-24 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div th:case="500" class="w-32 h-32 bg-yellow-100 rounded-full flex items-center justify-center">
+                <svg class="w-24 h-24 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.346 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>
+            </div>
+            <div th:case="*" class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center">
+                <svg class="w-24 h-24 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Error Code -->
+        <div class="text-center mb-6">
+            <h1 class="error-code" th:text="${status}">500</h1>
+            <h2 class="text-xl font-bold text-gray-800 mb-2" th:text="${error}">Error</h2>
+        </div>
+
+        <!-- Error Message -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-gray-700" th:text="${message}">Error message here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details (Collapsible with smooth animation) -->
+        <div class="mb-6">
+            <button id="details-toggle"
+                    class="w-full flex items-center justify-between p-3 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200">
+                <span>Technical Details</span>
+                <svg id="details-icon" class="w-4 h-4 rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div id="technical-details"
+                 class="bg-gray-50 rounded-lg border border-gray-200 text-xs text-gray-600 overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
+                <div class="p-4 space-y-2">
+                    <div class="flex">
+                        <span class="w-24 font-medium">Timestamp:</span>
+                        <span th:text="${timestamp}"></span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-24 font-medium">Path:</span>
+                        <span th:text="${path}"></span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-24 font-medium">Status:</span>
+                        <span th:text="${status}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a th:href="@{/dashboard}"
+               class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium text-center hover:bg-blue-700 transition shadow-sm">
+                <span class="flex items-center justify-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Go to Dashboard
+                </span>
+            </a>
+
+            <button onclick="history.back()"
+                    class="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition text-center">
+                <span class="flex items-center justify-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Go Back
+                </span>
+            </button>
+        </div>
+
+        <!-- Support Info -->
+        <div class="mt-8 pt-6 border-t border-gray-200 text-center">
+            <p class="text-sm text-gray-500">
+                Need help? Contact support at
+                <a href="mailto:support@teamtask.com" class="text-blue-600 hover:underline">support@teamtask.com</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const detailsToggle = document.getElementById('details-toggle');
+    const detailsContent = document.getElementById('technical-details');
+    const detailsIcon = document.getElementById('details-icon');
+    let isDetailsOpen = false;
+
+    detailsToggle.addEventListener('click', function() {
+        if (!isDetailsOpen) {
+            // Open details
+            detailsContent.classList.remove('max-h-0', 'opacity-0');
+            detailsContent.classList.add('max-h-64', 'opacity-100');
+            detailsIcon.classList.remove('rotate-0');
+            detailsIcon.classList.add('rotate-180');
+        } else {
+            // Close details
+            detailsContent.classList.remove('max-h-64', 'opacity-100');
+            detailsContent.classList.add('max-h-0', 'opacity-0');
+            detailsIcon.classList.remove('rotate-180');
+            detailsIcon.classList.add('rotate-0');
+        }
+        isDetailsOpen = !isDetailsOpen;
+    });
+</script>
+</body>
+</html>
