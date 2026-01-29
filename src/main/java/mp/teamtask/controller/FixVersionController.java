@@ -26,7 +26,6 @@ public class FixVersionController {
     public String listFixVersions(Model model) {
         List<FixVersion> fixVersions = fixVersionService.getAllFixVersions();
 
-        // Create a map to track if fix version is in use
         Map<Long, Boolean> fixVersionUsageMap = fixVersions.stream()
                 .collect(Collectors.toMap(
                         FixVersion::getId,
@@ -40,7 +39,6 @@ public class FixVersionController {
 
     @PostMapping
     public String addFixVersion(@RequestParam String version, RedirectAttributes redirectAttributes) {
-        // Check if fix version exists
         Optional<FixVersion> existing = fixVersionService.findByVersion(version);
 
         if (existing.isPresent()) {
@@ -68,7 +66,6 @@ public class FixVersionController {
         try {
             FixVersion existingFixVersion = fixVersionService.getFixVersionById(id);
 
-            // Check if the new version already exists (excluding current)
             Optional<FixVersion> existingWithVersion = fixVersionService.findByVersion(versionName);
             if (existingWithVersion.isPresent() && !existingWithVersion.get().getId().equals(id)) {
                 redirectAttributes.addFlashAttribute("error", "A fix version with the name '" + versionName + "' already exists.");

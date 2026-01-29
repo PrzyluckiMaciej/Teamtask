@@ -39,7 +39,6 @@ public class RoleController {
 
     @PostMapping
     public String addRole(@RequestParam String name, RedirectAttributes redirectAttributes) {
-        // Check if role exists (case-insensitive)
         Optional<Role> existing = roleService.findByName(name);
 
         if (existing.isPresent()) {

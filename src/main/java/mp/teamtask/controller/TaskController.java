@@ -22,7 +22,6 @@ public class TaskController {
     private final FixVersionService fixVersionService;
     private final TaskTypeService taskTypeService;
 
-    // Show form to create a new task
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("task", new TaskDTO());
@@ -34,7 +33,6 @@ public class TaskController {
         return "tasks/create-task";
     }
 
-    // Process the creation of a task
     @PostMapping
     public String createTask(@ModelAttribute("task") TaskDTO taskDTO) {
         Task task = new Task();
@@ -44,17 +42,14 @@ public class TaskController {
         TaskStage initialStage = taskStageService.getDefaultStage();
         task.setStage(initialStage);
 
-        // Set severity if provided
         if (taskDTO.getSeverityId() != null) {
             task.setSeverity(severityService.getSeverityById(taskDTO.getSeverityId()));
         }
 
-        // Set fix version if provided
         if (taskDTO.getFixVersionId() != null) {
             task.setFixVersion(fixVersionService.getFixVersionById(taskDTO.getFixVersionId()));
         }
 
-        // Set task type if provided
         if (taskDTO.getTaskTypeId() != null) {
             task.setTaskType(taskTypeService.getTaskTypeById(taskDTO.getTaskTypeId()));
         }
@@ -77,14 +72,12 @@ public class TaskController {
         return "tasks/details";
     }
 
-    // Process the update using PUT
     @PutMapping("/{id}")
     public String updateTask(@PathVariable Long id, @ModelAttribute("task") TaskDTO taskDTO) {
         taskService.updateTask(id, taskDTO);
         return "redirect:/dashboard";
     }
 
-    // Delete a task using the Hidden Method Filter
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String deleteTask(@PathVariable Long id) {

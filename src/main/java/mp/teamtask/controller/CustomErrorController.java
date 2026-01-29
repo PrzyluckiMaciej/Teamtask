@@ -39,13 +39,11 @@ public class CustomErrorController implements ErrorController {
 
         errorType = getErrorType(statusCode);
 
-        // Log the error
         log.error("Error {}: {} - URI: {}", statusCode, errorMessage, uri);
         if (exception != null) {
             log.error("Exception: ", (Throwable) exception);
         }
 
-        // Add attributes to model
         model.addAttribute("status", statusCode);
         model.addAttribute("error", errorType);
         model.addAttribute("message", errorMessage);

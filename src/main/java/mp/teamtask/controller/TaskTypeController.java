@@ -26,7 +26,6 @@ public class TaskTypeController {
     public String listTaskTypes(Model model) {
         List<TaskType> taskTypes = taskTypeService.getAllTaskTypes();
 
-        // Create a map to track if task type is in use
         Map<Long, Boolean> taskTypeUsageMap = taskTypes.stream()
                 .collect(Collectors.toMap(
                         TaskType::getId,
@@ -40,7 +39,6 @@ public class TaskTypeController {
 
     @PostMapping
     public String addTaskType(@RequestParam String type, RedirectAttributes redirectAttributes) {
-        // Check if task type exists
         Optional<TaskType> existing = taskTypeService.findByType(type);
 
         if (existing.isPresent()) {
@@ -68,7 +66,6 @@ public class TaskTypeController {
         try {
             TaskType existingTaskType = taskTypeService.getTaskTypeById(id);
 
-            // Check if the new type already exists (excluding current)
             Optional<TaskType> existingWithType = taskTypeService.findByType(typeName);
             if (existingWithType.isPresent() && !existingWithType.get().getId().equals(id)) {
                 redirectAttributes.addFlashAttribute("error", "A task type with the name '" + typeName + "' already exists.");

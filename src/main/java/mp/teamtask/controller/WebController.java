@@ -51,13 +51,12 @@ public class WebController {
 
     @GetMapping("/login")
     public String login() {
-        return "login"; // renders templates/login.html
+        return "login";
     }
 
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("user", new UserDTO());
-        // Fetch all roles from the database and filter out "Admin"
         List<Role> allRoles = roleService.getAllRoles();
         List<Role> filteredRoles = allRoles.stream()
                 .filter(role -> !role.getName().equalsIgnoreCase("Admin"))
@@ -72,7 +71,6 @@ public class WebController {
                                RedirectAttributes redirectAttributes,
                                Model model) {
 
-        // Fetch roles for the form in case of errors
         List<Role> allRoles = roleService.getAllRoles();
         List<Role> filteredRoles = allRoles.stream()
                 .filter(role -> !role.getName().equalsIgnoreCase("Admin"))
@@ -90,11 +88,9 @@ public class WebController {
             user.setEmail(userDTO.getEmail());
             user.setPassword(userDTO.getPassword());
 
-            // Get the requested role
             if (userDTO.getRoleId() != null) {
                 Role role = roleService.getRoleById(userDTO.getRoleId());
 
-                // SERVER-SIDE VALIDATION: Prevent registering as Admin
                 if (role.getName().equalsIgnoreCase("Admin")) {
                     redirectAttributes.addFlashAttribute("error", "Cannot register with Admin role.");
                     return "redirect:/register";
@@ -121,7 +117,6 @@ public class WebController {
             @RequestParam(required = false) Long fixVersionId,
             Model model) {
 
-        // Fetch tasks using the enhanced filtering
         List<Task> tasks = taskService.getFilteredTasks(
                 assigneeId, startDate, endDate,
                 severityId, taskTypeId, fixVersionId
@@ -134,7 +129,6 @@ public class WebController {
         model.addAttribute("taskTypes", taskTypeService.getAllTaskTypes());
         model.addAttribute("fixVersions", fixVersionService.getAllFixVersions());
 
-        // Keep track of selected filters to persist them in the UI
         model.addAttribute("selectedAssigneeId", assigneeId);
         model.addAttribute("selectedStartDate", startDate);
         model.addAttribute("selectedEndDate", endDate);
@@ -149,7 +143,6 @@ public class WebController {
     public String profilePage(Authentication authentication, Model model) {
         User user = (User) authentication.getPrincipal();
 
-        // Create a DTO for the form
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setFirstName(user.getFirstName());
         profileDTO.setLastName(user.getLastName());
@@ -170,7 +163,6 @@ public class WebController {
             return "profile";
         }
 
-        // Custom validation for password confirmation
         if (profileDTO.getNewPassword() != null && !profileDTO.getNewPassword().isEmpty()) {
             if (!profileDTO.getNewPassword().equals(profileDTO.getConfirmPassword())) {
                 bindingResult.addError(new FieldError("user", "confirmPassword",
@@ -182,7 +174,6 @@ public class WebController {
         User currentUser = (User) authentication.getPrincipal();
 
         try {
-            // Update user in database
             User updatedUser = userService.updateProfile(
                     currentUser.getId(),
                     profileDTO.getFirstName(),
@@ -194,14 +185,12 @@ public class WebController {
 
             boolean emailChanged = !currentUser.getEmail().equals(updatedUser.getEmail());
 
-            // Update the current principal for immediate UI update
             currentUser.setFirstName(updatedUser.getFirstName());
             currentUser.setLastName(updatedUser.getLastName());
 
             if (emailChanged) {
                 currentUser.setEmail(updatedUser.getEmail());
 
-                // If email changed, we need to log out
                 HttpSession session = request.getSession(false);
                 if (session != null) {
                     session.invalidate();
@@ -212,11 +201,6 @@ public class WebController {
                         "Profile updated successfully. Please log in with your new email.");
                 return "redirect:/login?emailChanged";
             } else {
-                // Only update password in principal if it was changed
-                if (profileDTO.getNewPassword() != null && !profileDTO.getNewPassword().isEmpty()) {
-                    // Don't set the encoded password in the principal, just acknowledge it was changed
-                }
-
                 redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
                 return "redirect:/profile";
             }
@@ -231,18 +215,15 @@ public class WebController {
     }
 
     private void refreshAuthentication(User updatedUser, HttpServletRequest request) {
-        // Create a new authentication token with updated user details
         UserDetails userDetails = userService.loadUserByUsername(updatedUser.getEmail());
         UsernamePasswordAuthenticationToken newAuth =
                 new UsernamePasswordAuthenticationToken(userDetails,
                         userDetails.getPassword(),
                         userDetails.getAuthorities());
 
-        // Set the new authentication in the security context
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(newAuth);
 
-        // Update the session
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.setAttribute("SPRING_SECURITY_CONTEXT", context);

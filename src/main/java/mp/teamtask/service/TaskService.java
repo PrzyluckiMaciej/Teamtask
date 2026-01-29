@@ -54,14 +54,12 @@ public class TaskService {
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
 
-        // Update Stage via database lookup
         if (dto.getStageId() != null) {
             TaskStage stage = taskStageRepository.findById(dto.getStageId())
                     .orElseThrow(() -> new RuntimeException("Stage not found"));
             task.setStage(stage);
         }
 
-        // Update Assignee via database lookup
         if (dto.getAssigneeId() != null) {
             User user = userRepository.findById(dto.getAssigneeId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -70,7 +68,6 @@ public class TaskService {
             task.setAssignee(null);
         }
 
-        // Update Severity via database lookup
         if (dto.getSeverityId() != null) {
             Severity severity = severityRepository.findById(dto.getSeverityId())
                     .orElseThrow(() -> new RuntimeException("Severity not found"));
@@ -79,7 +76,6 @@ public class TaskService {
             task.setSeverity(null);
         }
 
-        // Update FixVersion via database lookup
         if (dto.getFixVersionId() != null) {
             FixVersion fixVersion = fixVersionRepository.findById(dto.getFixVersionId())
                     .orElseThrow(() -> new RuntimeException("FixVersion not found"));
@@ -88,7 +84,6 @@ public class TaskService {
             task.setFixVersion(null);
         }
 
-        // Update TaskType via database lookup
         if (dto.getTaskTypeId() != null) {
             TaskType taskType = taskTypeRepository.findById(dto.getTaskTypeId())
                     .orElseThrow(() -> new RuntimeException("TaskType not found"));

@@ -84,12 +84,10 @@ public class UserController {
                     }
                 }
 
-                // Set the new role
                 existingUser.setRole(newRole);
             }
         }
 
-        // Update other fields
         if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
             existingUser.setFirstName(userDetails.getFirstName());
         }
@@ -108,7 +106,6 @@ public class UserController {
         if (selfRoleChange && roleChanged) {
             Role newRole = existingUser.getRole();
             if (!newRole.getName().equalsIgnoreCase("Admin")) {
-                // Invalidate session and redirect to login
                 SecurityContextHolder.clearContext();
                 HttpSession session = request.getSession(false);
                 if (session != null) {
@@ -165,7 +162,6 @@ public class UserController {
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
 
-        // Add roles back to model in case of errors
         model.addAttribute("roles", roleService.getAllRoles());
 
         if (bindingResult.hasErrors()) {

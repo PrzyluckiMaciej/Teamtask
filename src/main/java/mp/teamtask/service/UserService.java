@@ -62,7 +62,6 @@ public class UserService implements UserDetailsService {
         boolean selfUpdate = currentUser.getId().equals(id);
         boolean roleChanged = false;
 
-        // Check if trying to change role away from Admin when last admin
         boolean isCurrentAdmin = user.getRole().getName().equalsIgnoreCase("Admin");
 
         if (userDetails.getRole() != null) {
@@ -85,7 +84,6 @@ public class UserService implements UserDetailsService {
             user.setRole(newRole);
         }
 
-        // Only update if provided (not null and not empty)
         if (userDetails.getFirstName() != null && !userDetails.getFirstName().isEmpty()) {
             user.setFirstName(userDetails.getFirstName());
         }
@@ -100,7 +98,6 @@ public class UserService implements UserDetailsService {
 
         User savedUser = userRepository.save(user);
 
-        // Return both the saved user and a flag indicating if role changed
         return savedUser;
     }
 
@@ -126,7 +123,6 @@ public class UserService implements UserDetailsService {
         User userToDelete = userRepository.findById(id).orElse(null);
         if (userToDelete == null) return false;
 
-        // If the user is an admin, check if they are the last one
         if (userToDelete.getRole().getName().equalsIgnoreCase("Admin")) {
             return countAdmins() > 1;
         }
@@ -139,7 +135,6 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Update name
         if (firstName != null && !firstName.isEmpty()) {
             user.setFirstName(firstName);
         }
@@ -148,7 +143,6 @@ public class UserService implements UserDetailsService {
             user.setLastName(lastName);
         }
 
-        // Check if email is being changed
         boolean emailChanged = false;
         if (email != null && !email.isEmpty() && !email.equals(user.getEmail())) {
             if (userRepository.existsByEmail(email)) {
@@ -158,21 +152,17 @@ public class UserService implements UserDetailsService {
             emailChanged = true;
         }
 
-        // Handle password change
         if (newPassword != null && !newPassword.isEmpty()) {
             if (currentPassword == null || currentPassword.isEmpty()) {
                 throw new IllegalArgumentException("Current password is required to change password");
             }
 
-            // Verify current password
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
                 throw new IllegalArgumentException("Current password is incorrect");
             }
 
-            // Validate new password
             validatePassword(newPassword);
 
-            // Update password
             user.setPassword(passwordEncoder.encode(newPassword));
         }
 
@@ -188,17 +178,14 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("Password must be at least 6 characters long");
         }
 
-        // Check for at least one uppercase letter
         if (!password.matches(".*[A-Z].*")) {
             throw new IllegalArgumentException("Password must contain at least one uppercase letter");
         }
 
-        // Check for at least one lowercase letter
         if (!password.matches(".*[a-z].*")) {
             throw new IllegalArgumentException("Password must contain at least one lowercase letter");
         }
 
-        // Check for at least one digit
         if (!password.matches(".*\\d.*")) {
             throw new IllegalArgumentException("Password must contain at least one number");
         }

@@ -4,7 +4,6 @@
     <title>TeamTask - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for better scrolling */
         .dashboard-container {
             width: 100%;
             overflow-x: auto;
@@ -47,10 +46,8 @@
 <div th:replace="~{fragments/navbar :: header}"></div>
 
 <main class="p-6">
-    <!-- Compact Filter Panel -->
     <div class="max-w-7xl mx-auto mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <form th:action="@{/dashboard}" method="get" class="space-y-3">
-            <!-- Single row for all filters - optimized column spans -->
             <div class="grid grid-cols-1 md:grid-cols-8 gap-3">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label>
@@ -125,10 +122,8 @@
         </form>
     </div>
 
-    <!-- Dashboard Container with proper scrolling -->
     <div class="dashboard-container">
         <div class="stages-container">
-            <!-- Stage Columns -->
             <div th:each="stage : ${stages}" class="stage-column bg-gray-100 rounded-lg p-4">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="font-bold text-gray-700 uppercase tracking-wider text-sm" th:text="${stage.name}">STAGE NAME</h2>
@@ -138,9 +133,7 @@
                 <div class="space-y-4 min-h-[100px]">
                     <div th:each="task : ${tasks}" th:if="${task.stage.id == stage.id}"
                          class="bg-white p-4 rounded shadow-sm border hover:shadow-md transition-shadow">
-                        <!-- Top row with Task Type (left) and Severity (right) -->
                         <div class="flex justify-between items-center mb-3">
-                            <!-- Task Type Badge on the left -->
                             <div>
                                 <span th:if="${task.taskType != null}"
                                       class="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -160,7 +153,6 @@
                                 </span>
                             </div>
 
-                            <!-- Severity Badge on the right -->
                             <div th:if="${task.severity != null}">
                                 <span class="inline-flex items-center px-2.5 py-1.5 rounded text-xs font-bold"
                                       th:style="'background-color: ' + ${task.severity.color} + '22; color: ' + ${task.severity.color} + '; border: 1px solid ' + ${task.severity.color}">
@@ -177,12 +169,10 @@
                             </div>
                         </div>
 
-                        <!-- Task Title -->
                         <a th:href="@{/tasks/{id}(id=${task.id})}"
                            class="font-semibold hover:underline block mb-3 text-gray-800 text-sm"
                            th:text="${task.title}">Task Title</a>
 
-                        <!-- Assignee's full name -->
                         <div class="mt-3">
                             <div class="flex items-center">
                                 <div class="flex items-center bg-gray-100 px-3 py-1.5 rounded-md w-full justify-center">
@@ -195,7 +185,6 @@
                         </div>
                     </div>
 
-                    <!-- Empty state for columns with no tasks -->
                     <div th:if="${#lists.size(tasks.?[stage.id == __${stage.id}__]) == 0}"
                          class="text-center py-8 text-gray-400 text-sm">
                         <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">

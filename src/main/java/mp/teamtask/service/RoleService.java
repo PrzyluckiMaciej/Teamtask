@@ -42,7 +42,6 @@ public class RoleService {
         roleRepository.deleteById(id);
     }
 
-    // Helper for DataInitializer to avoid exceptions during startup
     public Role getOrCreateRole(String name) {
         return roleRepository.findByName(name)
                 .orElseGet(() -> roleRepository.save(new Role(null, name)));

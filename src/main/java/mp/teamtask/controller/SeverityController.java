@@ -41,7 +41,6 @@ public class SeverityController {
     public String addSeverity(@RequestParam String severity,
                               @RequestParam String color,
                               RedirectAttributes redirectAttributes) {
-        // Check if severity exists (case-insensitive)
         Optional<Severity> existing = severityService.findBySeverity(severity);
 
         if (existing.isPresent()) {
@@ -70,7 +69,6 @@ public class SeverityController {
         try {
             Severity existingSeverity = severityService.getSeverityById(id);
 
-            // Check if the new name already exists (excluding current)
             Optional<Severity> existingWithName = severityService.findBySeverity(severityName);
             if (existingWithName.isPresent() && !existingWithName.get().getId().equals(id)) {
                 redirectAttributes.addFlashAttribute("error", "A severity with the name '" + severityName + "' already exists.");

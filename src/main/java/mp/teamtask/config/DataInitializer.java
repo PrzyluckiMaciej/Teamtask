@@ -25,7 +25,6 @@ public class DataInitializer implements CommandLineRunner {
         Role programmerRole = roleService.getOrCreateRole("Programmer");
         Role testerRole = roleService.getOrCreateRole("Tester");
 
-        // Create admin user if not exists
         if (userService.getUserByEmail("admin@teamtask.com").isEmpty()) {
             User admin = new User();
             admin.setFirstName("Admin");
@@ -38,7 +37,6 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Admin user created: admin@teamtask.com / admin123");
         }
 
-        // Create sample programmer
         if (userService.getUserByEmail("programmer@teamtask.com").isEmpty()) {
             User programmer = new User();
             programmer.setFirstName("John");
@@ -51,7 +49,6 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Programmer user created: programmer@teamtask.com / programmer123");
         }
 
-        // Create sample tester
         if (userService.getUserByEmail("tester@teamtask.com").isEmpty()) {
             User tester = new User();
             tester.setFirstName("Jane");
@@ -69,11 +66,11 @@ public class DataInitializer implements CommandLineRunner {
         stageService.getOrCreateStage("TESTING", 2, false);
         stageService.getOrCreateStage("RESOLVED", 3, false);
 
-        severityService.getOrCreateSeverity("Critical", "#DC2626");    // Red-600
-        severityService.getOrCreateSeverity("High", "#EA580C");        // Orange-600
-        severityService.getOrCreateSeverity("Medium", "#D97706");      // Amber-600
-        severityService.getOrCreateSeverity("Low", "#65A30D");         // Lime-600
-        severityService.getOrCreateSeverity("Trivial", "#4B5563");     // Gray-600
+        severityService.getOrCreateSeverity("Critical", "#DC2626");
+        severityService.getOrCreateSeverity("High", "#EA580C");
+        severityService.getOrCreateSeverity("Medium", "#D97706");
+        severityService.getOrCreateSeverity("Low", "#65A30D");
+        severityService.getOrCreateSeverity("Trivial", "#4B5563");
 
         fixVersionService.getOrCreateFixVersion("1.0.0");
         fixVersionService.getOrCreateFixVersion("1.1.0");

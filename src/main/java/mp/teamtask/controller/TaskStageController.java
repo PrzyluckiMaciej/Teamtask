@@ -25,7 +25,6 @@ public class TaskStageController {
     public String listStages(Model model) {
         List<TaskStage> stages = stageService.getAllStages();
 
-        // Create a map of Stage ID -> Is In Use
         Map<Long, Boolean> usageMap = stages.stream()
                 .collect(Collectors.toMap(
                         TaskStage::getId,
@@ -42,7 +41,6 @@ public class TaskStageController {
                            @RequestParam Integer position,
                            RedirectAttributes redirectAttributes) {
         try {
-            // Check if stage already exists
             if (stageService.getStageByName(name).isPresent()) {
                 redirectAttributes.addFlashAttribute("error", "Stage with name '" + name + "' already exists.");
                 return "redirect:/manage/stages";
