@@ -55,6 +55,15 @@
             <div class="space-y-4">
                 <div th:each="task : ${tasks}" th:if="${task.stage.id == stage.id}"
                      class="bg-white p-4 rounded shadow-sm border hover:shadow-md transition-shadow">
+
+                    <!-- Severity indicator -->
+                    <div th:if="${task.severity != null}" class="mb-2">
+                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold"
+                              th:style="'background-color: ' + ${task.severity.color} + '22; color: ' + ${task.severity.color} + '; border: 1px solid ' + ${task.severity.color}">
+                            <span th:text="${task.severity.severity}"></span>
+                        </span>
+                    </div>
+
                     <a th:href="@{/tasks/{id}(id=${task.id})}"
                        class="font-semibold hover:underline block mb-2 text-gray-800"
                        th:text="${task.title}">Task Title</a>

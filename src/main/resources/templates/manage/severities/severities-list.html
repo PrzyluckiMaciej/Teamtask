@@ -57,6 +57,8 @@
         <form th:action="@{/manage/severities}" method="post" class="flex gap-3">
             <input type="text" name="severity" placeholder="New Severity Level"
                    class="flex-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <input type="color" name="color" value="#DC2626"
+                   class="h-10 w-20 border-0 rounded-md cursor-pointer p-0 overflow-hidden">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">
                 Add Severity
             </button>
@@ -68,6 +70,7 @@
             <thead class="bg-gray-50 border-b border-gray-200 text-gray-500 text-xs uppercase font-bold">
             <tr>
                 <th class="px-6 py-4">Severity Level</th>
+                <th class="px-6 py-4">Color</th>
                 <th class="px-6 py-4">Status</th>
                 <th class="px-6 py-4 text-center">Edit</th>
                 <th class="px-6 py-4 text-right">Delete</th>
@@ -76,6 +79,13 @@
             <tbody class="divide-y divide-gray-100">
             <tr th:each="severity : ${severities}" class="hover:bg-gray-50 transition">
                 <td class="px-6 py-4 font-medium text-gray-900" th:text="${severity.severity}">Severity Level</td>
+
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded border" th:style="'background-color: ' + ${severity.color}"></div>
+                        <span class="text-xs font-mono" th:text="${severity.color}">#DC2626</span>
+                    </div>
+                </td>
 
                 <td class="px-6 py-4">
                     <span th:if="${severityUsageMap.get(severity.id)}"

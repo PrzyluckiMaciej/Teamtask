@@ -38,7 +38,9 @@ public class SeverityController {
     }
 
     @PostMapping
-    public String addSeverity(@RequestParam String severity, RedirectAttributes redirectAttributes) {
+    public String addSeverity(@RequestParam String severity,
+                              @RequestParam String color,
+                              RedirectAttributes redirectAttributes) {
         // Check if severity exists (case-insensitive)
         Optional<Severity> existing = severityService.findBySeverity(severity);
 
@@ -47,7 +49,7 @@ public class SeverityController {
             return "redirect:/manage/severities";
         }
 
-        severityService.saveSeverity(new Severity(null, severity));
+        severityService.saveSeverity(new Severity(null, severity, color));
         redirectAttributes.addFlashAttribute("success", "Severity '" + severity + "' added successfully.");
         return "redirect:/manage/severities";
     }
@@ -61,8 +63,9 @@ public class SeverityController {
 
     @PutMapping("/{id}")
     public String updateSeverity(@PathVariable Long id,
-                                 @RequestParam("severity") String severityName,  // Changed to @RequestParam
-                                 RedirectAttributes redirectAttributes) {         // Added RedirectAttributes
+                                 @RequestParam("severity") String severityName,
+                                 @RequestParam("color") String color,
+                                 RedirectAttributes redirectAttributes) {
 
         try {
             Severity existingSeverity = severityService.getSeverityById(id);
@@ -75,6 +78,7 @@ public class SeverityController {
             }
 
             existingSeverity.setSeverity(severityName);
+            existingSeverity.setColor(color);
             severityService.saveSeverity(existingSeverity);
 
             redirectAttributes.addFlashAttribute("success", "Severity updated successfully.");

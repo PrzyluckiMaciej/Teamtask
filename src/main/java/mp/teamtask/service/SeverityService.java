@@ -31,9 +31,9 @@ public class SeverityService {
         return severityRepository.save(severity);
     }
 
-    public Severity getOrCreateSeverity(String severity) {
+    public Severity getOrCreateSeverity(String severity, String color) {
         return severityRepository.findBySeverity(severity)
-                .orElseGet(() -> severityRepository.save(new Severity(null, severity)));
+                .orElseGet(() -> severityRepository.save(new Severity(null, severity, color)));
     }
 
     public boolean isSeverityInUse(Long id) {

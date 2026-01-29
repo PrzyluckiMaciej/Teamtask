@@ -69,11 +69,11 @@ public class DataInitializer implements CommandLineRunner {
         stageService.getOrCreateStage("TESTING", 2, false);
         stageService.getOrCreateStage("RESOLVED", 3, false);
 
-        severityService.getOrCreateSeverity("Critical");
-        severityService.getOrCreateSeverity("High");
-        severityService.getOrCreateSeverity("Medium");
-        severityService.getOrCreateSeverity("Low");
-        severityService.getOrCreateSeverity("Trivial");
+        severityService.getOrCreateSeverity("Critical", "#DC2626");    // Red-600
+        severityService.getOrCreateSeverity("High", "#EA580C");        // Orange-600
+        severityService.getOrCreateSeverity("Medium", "#D97706");      // Amber-600
+        severityService.getOrCreateSeverity("Low", "#65A30D");         // Lime-600
+        severityService.getOrCreateSeverity("Trivial", "#4B5563");     // Gray-600
 
         fixVersionService.getOrCreateFixVersion("1.0.0");
         fixVersionService.getOrCreateFixVersion("1.1.0");

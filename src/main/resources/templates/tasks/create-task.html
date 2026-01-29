@@ -52,6 +52,7 @@
                     <option value="" selected>-- Select Severity --</option>
                     <option th:each="severity : ${severities}"
                             th:value="${severity.id}"
+                            th:style="'color: ' + ${severity.color}"
                             th:text="${severity.severity}">
                         Severity
                     </option>

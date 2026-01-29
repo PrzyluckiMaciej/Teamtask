@@ -20,16 +20,28 @@
             <span th:text="${success}"></span>
         </div>
 
-        <!-- Change form to use @RequestParam binding -->
         <form th:action="@{/manage/severities/{id}(id=${severity.id})}" th:method="put">
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Severity Level</label>
-                <input type="text" name="severity" th:value="${severity.severity}"
-                       class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                       required>
-                <p class="mt-2 text-xs text-gray-400 italic">
-                    Note: Changing a severity level will immediately update all tasks assigned with this severity.
-                </p>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Severity Level</label>
+                    <input type="text" name="severity" th:value="${severity.severity}"
+                           class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                           required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                    <div class="flex items-center gap-4">
+                        <input type="color" name="color" th:value="${severity.color}"
+                               class="h-10 w-20 border-0 rounded-md cursor-pointer p-0 overflow-hidden">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-mono text-gray-600" th:text="${severity.color}">#DC2626</span>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-400 italic">
+                        This color will be used to visually identify the severity level on tasks.
+                    </p>
+                </div>
             </div>
 
             <div class="flex items-center justify-between pt-4 border-t">

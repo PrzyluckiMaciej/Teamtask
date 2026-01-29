@@ -18,4 +18,7 @@ public class Severity {
 
     @Column(unique = true, nullable = false)
     private String severity;
+
+    @Column(name = "color", nullable = false)
+    private String color = "#DC2626";
 }
