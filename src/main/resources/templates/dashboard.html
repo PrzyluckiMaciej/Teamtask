@@ -137,7 +137,7 @@
 
                 <div class="space-y-4 min-h-[100px]">
                     <div th:each="task : ${tasks}" th:if="${task.stage.id == stage.id}"
-                         class="bg-white p-4 rounded shadow-sm border hover:shadow-md transition-shadow cursor-move">
+                         class="bg-white p-4 rounded shadow-sm border hover:shadow-md transition-shadow">
                         <!-- Top row with Task Type (left) and Severity (right) -->
                         <div class="flex justify-between items-center mb-3">
                             <!-- Task Type Badge on the left -->
