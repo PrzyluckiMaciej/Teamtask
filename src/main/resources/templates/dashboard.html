@@ -46,15 +46,15 @@
 <body class="bg-gray-50">
 <div th:replace="~{fragments/navbar :: header}"></div>
 
-<main class="p-8">
-    <!-- Filter Panel -->
-    <div class="max-w-7xl mx-auto mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <form th:action="@{/dashboard}" method="get" class="space-y-4">
-            <!-- Row 1: Person and Date Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<main class="p-6">
+    <!-- Compact Filter Panel -->
+    <div class="max-w-7xl mx-auto mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <form th:action="@{/dashboard}" method="get" class="space-y-3">
+            <!-- Single row for all filters - optimized column spans -->
+            <div class="grid grid-cols-1 md:grid-cols-8 gap-3">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label>
-                    <select name="assigneeId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                    <select name="assigneeId" class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
                         <option value="">All Team Members</option>
                         <option th:each="user : ${users}"
                                 th:value="${user.id}"
@@ -65,8 +65,8 @@
 
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Severity</label>
-                    <select name="severityId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
-                        <option value="">All Severities</option>
+                    <select name="severityId" class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All</option>
                         <option th:each="severity : ${severities}"
                                 th:value="${severity.id}"
                                 th:text="${severity.severity}"
@@ -75,9 +75,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Task Type</label>
-                    <select name="taskTypeId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
-                        <option value="">All Types</option>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
+                    <select name="taskTypeId" class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All</option>
                         <option th:each="type : ${taskTypes}"
                                 th:value="${type.id}"
                                 th:text="${type.type}"
@@ -86,40 +86,40 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fix Version</label>
-                    <select name="fixVersionId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
-                        <option value="">All Versions</option>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Version</label>
+                    <select name="fixVersionId" class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All</option>
                         <option th:each="version : ${fixVersions}"
                                 th:value="${version.id}"
                                 th:text="${version.version}"
                                 th:selected="${version.id == selectedFixVersionId}"></option>
                     </select>
                 </div>
-            </div>
 
-            <!-- Row 2: Date Range Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">From Date</label>
-                    <input type="date" name="startDate" th:value="${selectedStartDate}"
-                           class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date Range</label>
+                    <div class="flex gap-2">
+                        <input type="date" name="startDate" th:value="${selectedStartDate}"
+                               class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm"
+                               placeholder="From">
+                        <span class="self-center text-gray-400">→</span>
+                        <input type="date" name="endDate" th:value="${selectedEndDate}"
+                               class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm"
+                               placeholder="To">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">To Date</label>
-                    <input type="date" name="endDate" th:value="${selectedEndDate}"
-                           class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
-                </div>
-
-                <div class="flex items-end gap-2">
-                    <button type="submit"
-                            class="w-full bg-blue-600 text-white px-4 py-2.5 rounded text-sm font-bold hover:bg-blue-700 transition">
-                        Apply Filters
-                    </button>
-                    <a th:href="@{/dashboard}"
-                       class="w-full bg-gray-200 text-gray-700 px-4 py-2.5 rounded text-sm font-bold hover:bg-gray-300 transition text-center">
-                        Reset
-                    </a>
+                <div class="md:col-span-2">
+                    <div class="flex items-end gap-2 h-full">
+                        <button type="submit"
+                                class="w-full bg-blue-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-blue-700 transition">
+                            Filter
+                        </button>
+                        <a th:href="@{/dashboard}"
+                           class="w-full bg-gray-200 text-gray-700 px-3 py-2 rounded text-sm font-bold hover:bg-gray-300 transition text-center">
+                            Reset
+                        </a>
+                    </div>
                 </div>
             </div>
         </form>
@@ -208,46 +208,5 @@
         </div>
     </div>
 </main>
-
-<script>
-    // Optional: Add keyboard navigation for better accessibility
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.querySelector('.dashboard-container');
-
-        // Add keyboard shortcuts for scrolling
-        document.addEventListener('keydown', function(e) {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-                return; // Don't interfere with form inputs
-            }
-
-            if (e.key === 'ArrowLeft') {
-                container.scrollLeft -= 100;
-                e.preventDefault();
-            } else if (e.key === 'ArrowRight') {
-                container.scrollLeft += 100;
-                e.preventDefault();
-            } else if (e.key === 'Home') {
-                container.scrollLeft = 0;
-                e.preventDefault();
-            } else if (e.key === 'End') {
-                container.scrollLeft = container.scrollWidth;
-                e.preventDefault();
-            }
-        });
-
-        // Add scroll indicators
-        function updateScrollIndicators() {
-            const hasLeftScroll = container.scrollLeft > 10;
-            const hasRightScroll = container.scrollLeft < (container.scrollWidth - container.clientWidth - 10);
-
-            // You could add visual indicators here if needed
-            // For example, fade-in/fade-out arrows at the edges
-        }
-
-        container.addEventListener('scroll', updateScrollIndicators);
-        window.addEventListener('resize', updateScrollIndicators);
-        updateScrollIndicators(); // Initial check
-    });
-</script>
 </body>
 </html>
