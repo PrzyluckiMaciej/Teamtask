@@ -9,10 +9,7 @@ import mp.teamtask.domain.TaskStage;
 import mp.teamtask.domain.User;
 import mp.teamtask.dto.ProfileDTO;
 import mp.teamtask.dto.UserDTO;
-import mp.teamtask.service.RoleService;
-import mp.teamtask.service.TaskStageService;
-import mp.teamtask.service.UserService;
-import mp.teamtask.service.TaskService;
+import mp.teamtask.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,7 +40,9 @@ public class WebController {
     private final TaskService taskService;
     private final RoleService roleService;
     private final TaskStageService taskStageService;
-    private final PasswordEncoder passwordEncoder;
+    private final SeverityService severityService;
+    private final FixVersionService fixVersionService;
+    private final TaskTypeService taskTypeService;
 
     @GetMapping("/")
     public String index() {
@@ -117,19 +116,31 @@ public class WebController {
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Long severityId,
+            @RequestParam(required = false) Long taskTypeId,
+            @RequestParam(required = false) Long fixVersionId,
             Model model) {
 
-        // Fetch tasks using a flexible filtering approach
-        List<Task> tasks = taskService.getFilteredTasks(assigneeId, startDate, endDate);
+        // Fetch tasks using the enhanced filtering
+        List<Task> tasks = taskService.getFilteredTasks(
+                assigneeId, startDate, endDate,
+                severityId, taskTypeId, fixVersionId
+        );
 
         model.addAttribute("tasks", tasks);
         model.addAttribute("stages", taskStageService.getAllStages());
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("severities", severityService.getAllSeverities());
+        model.addAttribute("taskTypes", taskTypeService.getAllTaskTypes());
+        model.addAttribute("fixVersions", fixVersionService.getAllFixVersions());
 
         // Keep track of selected filters to persist them in the UI
         model.addAttribute("selectedAssigneeId", assigneeId);
         model.addAttribute("selectedStartDate", startDate);
         model.addAttribute("selectedEndDate", endDate);
+        model.addAttribute("selectedSeverityId", severityId);
+        model.addAttribute("selectedTaskTypeId", taskTypeId);
+        model.addAttribute("selectedFixVersionId", fixVersionId);
 
         return "dashboard";
     }

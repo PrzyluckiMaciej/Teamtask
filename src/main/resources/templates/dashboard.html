@@ -48,38 +48,79 @@
 
 <main class="p-8">
     <!-- Filter Panel -->
-    <div class="max-w-7xl mx-auto mb-8 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <form th:action="@{/dashboard}" method="get" class="flex flex-wrap items-end gap-4">
-            <div class="flex-1 min-w-[200px]">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label>
-                <select name="assigneeId" class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
-                    <option value="">All Team Members</option>
-                    <option th:each="user : ${users}"
-                            th:value="${user.id}"
-                            th:text="${user.firstName + ' ' + user.lastName}"
-                            th:selected="${user.id == selectedAssigneeId}"></option>
-                </select>
+    <div class="max-w-7xl mx-auto mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <form th:action="@{/dashboard}" method="get" class="space-y-4">
+            <!-- Row 1: Person and Date Filters -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned To</label>
+                    <select name="assigneeId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All Team Members</option>
+                        <option th:each="user : ${users}"
+                                th:value="${user.id}"
+                                th:text="${user.firstName + ' ' + user.lastName}"
+                                th:selected="${user.id == selectedAssigneeId}"></option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Severity</label>
+                    <select name="severityId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All Severities</option>
+                        <option th:each="severity : ${severities}"
+                                th:value="${severity.id}"
+                                th:text="${severity.severity}"
+                                th:selected="${severity.id == selectedSeverityId}"></option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Task Type</label>
+                    <select name="taskTypeId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All Types</option>
+                        <option th:each="type : ${taskTypes}"
+                                th:value="${type.id}"
+                                th:text="${type.type}"
+                                th:selected="${type.id == selectedTaskTypeId}"></option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fix Version</label>
+                    <select name="fixVersionId" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                        <option value="">All Versions</option>
+                        <option th:each="version : ${fixVersions}"
+                                th:value="${version.id}"
+                                th:text="${version.version}"
+                                th:selected="${version.id == selectedFixVersionId}"></option>
+                    </select>
+                </div>
             </div>
 
-            <div class="flex-1 min-w-[150px]">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">From Date</label>
-                <input type="date" name="startDate" th:value="${selectedStartDate}"
-                       class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
-            </div>
+            <!-- Row 2: Date Range Filters -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">From Date</label>
+                    <input type="date" name="startDate" th:value="${selectedStartDate}"
+                           class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                </div>
 
-            <div class="flex-1 min-w-[150px]">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">To Date</label>
-                <input type="date" name="endDate" th:value="${selectedEndDate}"
-                       class="w-full p-2 bg-gray-50 border border-gray-300 rounded text-sm">
-            </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">To Date</label>
+                    <input type="date" name="endDate" th:value="${selectedEndDate}"
+                           class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded text-sm">
+                </div>
 
-            <div class="flex gap-2">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 transition">
-                    Apply
-                </button>
-                <a th:href="@{/dashboard}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm font-bold hover:bg-gray-300 transition">
-                    Reset
-                </a>
+                <div class="flex items-end gap-2">
+                    <button type="submit"
+                            class="w-full bg-blue-600 text-white px-4 py-2.5 rounded text-sm font-bold hover:bg-blue-700 transition">
+                        Apply Filters
+                    </button>
+                    <a th:href="@{/dashboard}"
+                       class="w-full bg-gray-200 text-gray-700 px-4 py-2.5 rounded text-sm font-bold hover:bg-gray-300 transition text-center">
+                        Reset
+                    </a>
+                </div>
             </div>
         </form>
     </div>

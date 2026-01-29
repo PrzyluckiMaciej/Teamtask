@@ -121,13 +121,17 @@ public class TaskService {
         return taskRepository.findByAssignee(user);
     }
 
-    public List<Task> getFilteredTasks(Long assigneeId, LocalDate start, LocalDate end) {
+    public List<Task> getFilteredTasks(Long assigneeId, LocalDate start, LocalDate end,
+                                       Long severityId, Long taskTypeId, Long fixVersionId) {
         List<Task> allTasks = taskRepository.findAll();
 
         return allTasks.stream()
                 .filter(t -> assigneeId == null || (t.getAssignee() != null && t.getAssignee().getId().equals(assigneeId)))
                 .filter(t -> start == null || !t.getCreatedAt().toLocalDate().isBefore(start))
                 .filter(t -> end == null || !t.getCreatedAt().toLocalDate().isAfter(end))
+                .filter(t -> severityId == null || (t.getSeverity() != null && t.getSeverity().getId().equals(severityId)))
+                .filter(t -> taskTypeId == null || (t.getTaskType() != null && t.getTaskType().getId().equals(taskTypeId)))
+                .filter(t -> fixVersionId == null || (t.getFixVersion() != null && t.getFixVersion().getId().equals(fixVersionId)))
                 .collect(Collectors.toList());
     }
 }
