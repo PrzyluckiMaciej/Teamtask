@@ -64,10 +64,10 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Tester user created: tester@teamtask.com / tester123");
         }
 
-        stageService.getOrCreateStage("NEW", "#6B7280", 0, true);
-        stageService.getOrCreateStage("IN PROGRESS", "#3B82F6", 1, false);
-        stageService.getOrCreateStage("TESTING", "#8B5CF6", 2, false);
-        stageService.getOrCreateStage("RESOLVED", "#10B981", 3, false);
+        stageService.getOrCreateStage("NEW", 0, true);
+        stageService.getOrCreateStage("IN PROGRESS", 1, false);
+        stageService.getOrCreateStage("TESTING", 2, false);
+        stageService.getOrCreateStage("RESOLVED", 3, false);
 
         severityService.getOrCreateSeverity("Critical");
         severityService.getOrCreateSeverity("High");

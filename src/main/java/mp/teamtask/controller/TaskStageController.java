@@ -38,9 +38,28 @@ public class TaskStageController {
     }
 
     @PostMapping
-    public String addStage(@ModelAttribute TaskStage stage) {
-        stageService.getOrCreateStage(stage.getName(), stage.getColor(), stage.getPosition(), false);
-        return "redirect:/manage/stages";
+    public String addStage(@RequestParam String name,
+                           @RequestParam Integer position,
+                           RedirectAttributes redirectAttributes) {
+        try {
+            // Check if stage already exists
+            if (stageService.getStageByName(name).isPresent()) {
+                redirectAttributes.addFlashAttribute("error", "Stage with name '" + name + "' already exists.");
+                return "redirect:/manage/stages";
+            }
+
+            TaskStage stage = new TaskStage();
+            stage.setName(name);
+            stage.setPosition(position);
+            stage.setDefault(false);
+
+            stageService.saveStage(stage);
+            redirectAttributes.addFlashAttribute("success", "Stage '" + name + "' added successfully.");
+            return "redirect:/manage/stages";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error adding stage: " + e.getMessage());
+            return "redirect:/manage/stages";
+        }
     }
 
     @PostMapping("/default/{id}")
@@ -58,10 +77,9 @@ public class TaskStageController {
     @PutMapping("/{id}")
     public String updateStage(@PathVariable Long id,
                               @RequestParam String name,
-                              @RequestParam String color,
                               @RequestParam Integer position,
                               RedirectAttributes redirectAttributes) {
-        stageService.updateStage(id, name, color, position);
+        stageService.updateStage(id, name, position);
         redirectAttributes.addFlashAttribute("success", "Stage updated successfully.");
         return "redirect:/manage/stages";
     }

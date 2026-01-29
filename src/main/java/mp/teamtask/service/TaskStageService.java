@@ -8,6 +8,7 @@ import mp.teamtask.repository.TaskStageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +36,9 @@ public class TaskStageService {
         taskStageRepository.save(newDefault);
     }
 
-    public TaskStage getOrCreateStage(String name, String color, Integer position, boolean isDefault) {
+    public TaskStage getOrCreateStage(String name, Integer position, boolean isDefault) {
         return taskStageRepository.findByName(name)
-                .orElseGet(() -> taskStageRepository.save(new TaskStage(null, name, color, isDefault, position)));
+                .orElseGet(() -> taskStageRepository.save(new TaskStage(null, name, isDefault, position)));
     }
 
     public TaskStage getStageById(Long id) {
@@ -45,11 +46,18 @@ public class TaskStageService {
                 .orElseThrow(() -> new IllegalArgumentException("Stage not found with ID: " + id));
     }
 
+    public Optional<TaskStage> getStageByName(String name) {
+        return taskStageRepository.findByName(name);
+    }
+
+    public TaskStage saveStage(TaskStage stage) {
+        return taskStageRepository.save(stage);
+    }
+
     @Transactional
-    public void updateStage(Long id, String name, String color, Integer position) {
+    public void updateStage(Long id, String name, Integer position) {
         TaskStage stage = getStageById(id);
         stage.setName(name);
-        stage.setColor(color);
         stage.setPosition(position); // Update position
         taskStageRepository.save(stage);
     }
