@@ -36,7 +36,14 @@ public class SeverityService {
                 .orElseGet(() -> severityRepository.save(new Severity(null, severity)));
     }
 
+    public boolean isSeverityInUse(Long id) {
+        return severityRepository.countTasksBySeverityId(id) > 0;
+    }
+
     public void deleteSeverity(Long id) {
+        if (isSeverityInUse(id)) {
+            throw new IllegalStateException("Severity is currently assigned to tasks and cannot be deleted.");
+        }
         severityRepository.deleteById(id);
     }
 }

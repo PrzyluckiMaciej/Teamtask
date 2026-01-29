@@ -36,7 +36,14 @@ public class FixVersionService {
                 .orElseGet(() -> fixVersionRepository.save(new FixVersion(null, version)));
     }
 
+    public boolean isFixVersionInUse(Long id) {
+        return fixVersionRepository.countTasksByFixVersionId(id) > 0;
+    }
+
     public void deleteFixVersion(Long id) {
+        if (isFixVersionInUse(id)) {
+            throw new IllegalStateException("Fix version is currently assigned to tasks and cannot be deleted.");
+        }
         fixVersionRepository.deleteById(id);
     }
 }

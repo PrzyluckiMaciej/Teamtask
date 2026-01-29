@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Severities - TeamTask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div th:replace="~{fragments/navbar :: header}"></div>
+
+<main class="max-w-4xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">Severity Levels</h1>
+
+        <a th:href="@{/manage}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors group">
+            <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to Menu
+        </a>
+    </div>
+
+    <div class="space-y-4 mb-6">
+        <div th:if="${error}"
+             id="error-alert"
+             class="flex items-center justify-between p-4 bg-red-50 border-l-4 border-red-500 text-red-700 shadow-sm rounded-r-lg transition-opacity duration-300">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm font-bold" th:text="${error}">Error message</span>
+            </div>
+            <button onclick="document.getElementById('error-alert').style.display='none'" class="text-red-500 hover:text-red-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div th:if="${success}"
+             id="success-alert"
+             class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 text-green-700 shadow-sm rounded-r-lg transition-opacity duration-300">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm font-bold" th:text="${success}">Success message</span>
+            </div>
+            <button onclick="document.getElementById('success-alert').style.display='none'" class="text-green-500 hover:text-green-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <form th:action="@{/manage/severities}" method="post" class="flex gap-3">
+            <input type="text" name="severity" placeholder="New Severity Level"
+                   class="flex-1 p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">
+                Add Severity
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50 border-b border-gray-200 text-gray-500 text-xs uppercase font-bold">
+            <tr>
+                <th class="px-6 py-4">Severity Level</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-center">Edit</th>
+                <th class="px-6 py-4 text-right">Delete</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+            <tr th:each="severity : ${severities}" class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4 font-medium text-gray-900" th:text="${severity.severity}">Severity Level</td>
+
+                <td class="px-6 py-4">
+                    <span th:if="${severityUsageMap.get(severity.id)}"
+                          class="inline-flex items-center text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded">
+                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-orange-400"></span>
+                        IN USE
+                    </span>
+                    <span th:unless="${severityUsageMap.get(severity.id)}"
+                          class="text-xs text-gray-400 italic">
+                        Unused
+                    </span>
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                    <a th:href="@{/manage/severities/edit/{id}(id=${severity.id})}"
+                       class="inline-block text-gray-500 hover:text-blue-600 transition-colors">
+                        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </a>
+                </td>
+
+                <td class="px-6 py-4 text-right">
+                    <form th:if="${!severityUsageMap.get(severity.id)}"
+                          th:action="@{/manage/severities/{id}(id=${severity.id})}" th:method="delete"
+                          class="m-0 p-0" onsubmit="return confirm('Delete this severity level?')">
+                        <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors">
+                            <svg class="w-5 h-5 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </form>
+                    <div th:if="${severityUsageMap.get(severity.id)}" class="text-gray-200">
+                        <svg class="w-5 h-5 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

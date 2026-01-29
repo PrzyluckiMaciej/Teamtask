@@ -36,7 +36,14 @@ public class TaskTypeService {
                 .orElseGet(() -> taskTypeRepository.save(new TaskType(null, type)));
     }
 
+    public boolean isTaskTypeInUse(Long id) {
+        return taskTypeRepository.countTasksByTaskTypeId(id) > 0;
+    }
+
     public void deleteTaskType(Long id) {
+        if (isTaskTypeInUse(id)) {
+            throw new IllegalStateException("Task type is currently assigned to tasks and cannot be deleted.");
+        }
         taskTypeRepository.deleteById(id);
     }
 }
