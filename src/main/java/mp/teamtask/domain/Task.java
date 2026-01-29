@@ -34,6 +34,18 @@ public class Task {
     @JoinColumn(name = "assignee_id")
     private User assignee;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "severity_id")
+    private Severity severity;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fix_version_id")
+    private FixVersion fixVersion;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "task_type_id")
+    private TaskType taskType;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

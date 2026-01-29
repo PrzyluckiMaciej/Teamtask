@@ -2,13 +2,9 @@ package mp.teamtask.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import mp.teamtask.domain.Task;
-import mp.teamtask.domain.TaskStage;
-import mp.teamtask.domain.User;
+import mp.teamtask.domain.*;
 import mp.teamtask.dto.TaskDTO;
-import mp.teamtask.repository.TaskRepository;
-import mp.teamtask.repository.TaskStageRepository;
-import mp.teamtask.repository.UserRepository;
+import mp.teamtask.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +19,9 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TaskStageRepository taskStageRepository;
+    private final SeverityRepository severityRepository;
+    private final FixVersionRepository fixVersionRepository;
+    private final TaskTypeRepository taskTypeRepository;
 
     public void createTask(Task task, Long assigneeId) {
         if (assigneeId != null) {
@@ -69,6 +68,33 @@ public class TaskService {
             task.setAssignee(user);
         } else {
             task.setAssignee(null);
+        }
+
+        // Update Severity via database lookup
+        if (dto.getSeverityId() != null) {
+            Severity severity = severityRepository.findById(dto.getSeverityId())
+                    .orElseThrow(() -> new RuntimeException("Severity not found"));
+            task.setSeverity(severity);
+        } else {
+            task.setSeverity(null);
+        }
+
+        // Update FixVersion via database lookup
+        if (dto.getFixVersionId() != null) {
+            FixVersion fixVersion = fixVersionRepository.findById(dto.getFixVersionId())
+                    .orElseThrow(() -> new RuntimeException("FixVersion not found"));
+            task.setFixVersion(fixVersion);
+        } else {
+            task.setFixVersion(null);
+        }
+
+        // Update TaskType via database lookup
+        if (dto.getTaskTypeId() != null) {
+            TaskType taskType = taskTypeRepository.findById(dto.getTaskTypeId())
+                    .orElseThrow(() -> new RuntimeException("TaskType not found"));
+            task.setTaskType(taskType);
+        } else {
+            task.setTaskType(null);
         }
 
         taskRepository.save(task);

@@ -18,4 +18,13 @@ public class TaskDTO {
     private Long assigneeId;
 
     private String assigneeName;
+
+    private Long severityId;
+    private String severityName;
+
+    private Long fixVersionId;
+    private String fixVersionName;
+
+    private Long taskTypeId;
+    private String taskTypeName;
 }

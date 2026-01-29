@@ -3,9 +3,7 @@ package mp.teamtask.config;
 import lombok.RequiredArgsConstructor;
 import mp.teamtask.domain.Role;
 import mp.teamtask.domain.User;
-import mp.teamtask.service.RoleService;
-import mp.teamtask.service.TaskStageService;
-import mp.teamtask.service.UserService;
+import mp.teamtask.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +14,10 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleService roleService;
     private final UserService userService;
     private final TaskStageService stageService;
+    private final SeverityService severityService;
+    private final FixVersionService fixVersionService;
+    private final TaskTypeService taskTypeService;
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -66,5 +68,23 @@ public class DataInitializer implements CommandLineRunner {
         stageService.getOrCreateStage("IN PROGRESS", "#3B82F6", 1, false);
         stageService.getOrCreateStage("TESTING", "#8B5CF6", 2, false);
         stageService.getOrCreateStage("RESOLVED", "#10B981", 3, false);
+
+        severityService.getOrCreateSeverity("Critical");
+        severityService.getOrCreateSeverity("High");
+        severityService.getOrCreateSeverity("Medium");
+        severityService.getOrCreateSeverity("Low");
+        severityService.getOrCreateSeverity("Trivial");
+
+        fixVersionService.getOrCreateFixVersion("1.0.0");
+        fixVersionService.getOrCreateFixVersion("1.1.0");
+        fixVersionService.getOrCreateFixVersion("2.0.0");
+        fixVersionService.getOrCreateFixVersion("Next Release");
+        fixVersionService.getOrCreateFixVersion("Backlog");
+
+        taskTypeService.getOrCreateTaskType("Bug");
+        taskTypeService.getOrCreateTaskType("Feature");
+        taskTypeService.getOrCreateTaskType("Improvement");
+        taskTypeService.getOrCreateTaskType("Task");
+        taskTypeService.getOrCreateTaskType("Epic");
     }
 }
