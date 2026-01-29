@@ -51,7 +51,7 @@
                         <select th:field="*{severityId}" class="w-full p-2 border border-gray-300 rounded bg-white text-sm">
                             <option value="">Select Severity</option>
                             <option th:each="severity : ${severities}" th:value="${severity.id}"
-                                    th:style="'color: ' + ${severity.color}" th:text="${severity.severity}"></option>
+                                    th:text="${severity.severity}"></option>
                         </select>
                     </div>
 
