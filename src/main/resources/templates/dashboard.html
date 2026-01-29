@@ -4,25 +4,31 @@
     <title>TeamTask - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .dashboard-container {
+        .dashboard-wrapper {
+            display: flex;
+            justify-content: center;
             width: 100%;
+        }
+
+        .dashboard-container {
+            max-width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 1rem;
         }
 
         .stages-container {
             display: flex;
-            min-width: max-content; /* Ensures container is as wide as all columns */
-            padding: 0 1rem; /* Add padding so edge columns aren't flush with edges */
+            padding: 0 1rem;
+            margin: 0 auto;
         }
 
         .stage-column {
-            flex-shrink: 0; /* Prevent columns from shrinking */
-            width: 260px; /* Fixed width for consistency */
-            margin-right: 1.5rem; /* Spacing between columns */
+            flex-shrink: 0;
+            width: 260px;
+            margin-right: 1.5rem;
         }
 
-        /* Custom scrollbar styling */
         .dashboard-container::-webkit-scrollbar {
             height: 8px;
         }
@@ -122,19 +128,20 @@
         </form>
     </div>
 
-    <div class="dashboard-container">
-        <div class="stages-container">
-            <div th:each="stage : ${stages}" class="stage-column bg-gray-100 rounded-lg p-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-gray-700 uppercase tracking-wider text-sm" th:text="${stage.name}">STAGE NAME</h2>
-                    <span class="text-sm font-semibold text-gray-600" th:text="${#lists.size(tasks.?[stage.id == __${stage.id}__])}">0</span>
-                </div>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-container">
+            <div class="stages-container">
+                <div th:each="stage : ${stages}" class="stage-column bg-gray-100 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-bold text-gray-700 uppercase tracking-wider text-sm" th:text="${stage.name}">STAGE NAME</h2>
+                        <span class="text-sm font-semibold text-gray-600" th:text="${#lists.size(tasks.?[stage.id == __${stage.id}__])}">0</span>
+                    </div>
 
-                <div class="space-y-4 min-h-[100px]">
-                    <div th:each="task : ${tasks}" th:if="${task.stage.id == stage.id}"
-                         class="bg-white p-4 rounded shadow-sm border hover:shadow-md transition-shadow">
-                        <div class="flex justify-between items-center mb-3">
-                            <div>
+                    <div class="space-y-4 min-h-[100px]">
+                        <div th:each="task : ${tasks}" th:if="${task.stage.id == stage.id}"
+                             class="bg-white p-4 rounded shadow-sm border hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
                                 <span th:if="${task.taskType != null}"
                                       class="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                     <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,54 +150,55 @@
                                     </svg>
                                     <span th:text="${task.taskType.type}">Task Type</span>
                                 </span>
-                                <span th:if="${task.taskType == null}"
-                                      class="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400">
+                                    <span th:if="${task.taskType == null}"
+                                          class="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400">
                                     <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                     </svg>
                                     No Type
                                 </span>
-                            </div>
+                                </div>
 
-                            <div th:if="${task.severity != null}">
+                                <div th:if="${task.severity != null}">
                                 <span class="inline-flex items-center px-2.5 py-1.5 rounded text-xs font-bold"
                                       th:style="'background-color: ' + ${task.severity.color} + '22; color: ' + ${task.severity.color} + '; border: 1px solid ' + ${task.severity.color}">
                                     <span class="w-1.5 h-1.5 rounded-full mr-1.5"
                                           th:style="'background-color: ' + ${task.severity.color}"></span>
                                     <span th:text="${task.severity.severity}">Severity</span>
                                 </span>
-                            </div>
-                            <div th:if="${task.severity == null}">
+                                </div>
+                                <div th:if="${task.severity == null}">
                                 <span class="inline-flex items-center px-2.5 py-1.5 rounded text-xs font-medium text-gray-400 bg-gray-50">
                                     <span class="w-1.5 h-1.5 rounded-full mr-1.5 bg-gray-300"></span>
                                     No Priority
                                 </span>
+                                </div>
                             </div>
-                        </div>
 
-                        <a th:href="@{/tasks/{id}(id=${task.id})}"
-                           class="font-semibold hover:underline block mb-3 text-gray-800 text-sm"
-                           th:text="${task.title}">Task Title</a>
+                            <a th:href="@{/tasks/{id}(id=${task.id})}"
+                               class="font-semibold hover:underline block mb-3 text-gray-800 text-sm"
+                               th:text="${task.title}">Task Title</a>
 
-                        <div class="mt-3">
-                            <div class="flex items-center">
-                                <div class="flex items-center bg-gray-100 px-3 py-1.5 rounded-md w-full justify-center">
+                            <div class="mt-3">
+                                <div class="flex items-center">
+                                    <div class="flex items-center bg-gray-100 px-3 py-1.5 rounded-md w-full justify-center">
                                     <span class="text-xs font-medium text-gray-800"
                                           th:text="${task.assignee != null ? task.assignee.firstName + ' ' + task.assignee.lastName : 'Unassigned'}">
                                         Assignee's Full Name
                                     </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div th:if="${#lists.size(tasks.?[stage.id == __${stage.id}__]) == 0}"
-                         class="text-center py-8 text-gray-400 text-sm">
-                        <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
-                        No tasks in this stage
+                        <div th:if="${#lists.size(tasks.?[stage.id == __${stage.id}__]) == 0}"
+                             class="text-center py-8 text-gray-400 text-sm">
+                            <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            No tasks in this stage
+                        </div>
                     </div>
                 </div>
             </div>
